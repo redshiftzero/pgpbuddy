@@ -3,11 +3,16 @@ import smtplib
 import gnupg
 
 
-def send_message(smtp_server, smtp_port, username, password, target):
+def plaintext_response(smtp_server, smtp_port, username, password, target):
     with connect(smtp_server, smtp_port, username, password) as conn:
         email_body = "Subject: PLAINTEXT.\nYOU'VE SENT PLAINTEXT"
         conn.sendmail(username, target, email_body)
 
+
+def encrypted_response(smtp_server, smtp_port, username, password, target):
+    with connect(smtp_server, smtp_port, username, password) as conn:
+        email_body = "Subject: ENCRYPTED.\nSUCCESS!! YOU'VE SENT ENCRYPTED"
+        conn.sendmail(username, target, email_body)
 
 @contextmanager
 def connect(smtp_server, smtp_port, username, password):
