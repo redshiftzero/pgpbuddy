@@ -1,3 +1,5 @@
 pop3-server: example.com
+smtp-server: example.com
+smtp-port: 465
 username: test@example.com
 password: very_secure_password
