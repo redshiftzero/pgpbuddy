@@ -3,3 +3,5 @@ smtp-server: example.com
 smtp-port: 465
 username: test@example.com
 password: very_secure_password
+
+gnupghome: /home/yourusername/.gnupg
