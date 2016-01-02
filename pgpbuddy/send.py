@@ -14,6 +14,18 @@ def encrypted_response(smtp_server, smtp_port, username, password, target):
         email_body = "Subject: ENCRYPTED.\nSUCCESS!! YOU'VE SENT ENCRYPTED"
         conn.sendmail(username, target, email_body)
 
+
+def signed_response(smtp_server, smtp_port, username, password, target):
+    with connect(smtp_server, smtp_port, username, password) as conn:
+        email_body = "Subject: SIGNED.\nSUCCESS!! YOU'VE SENT A SIGNED MESSAGE!!"
+        conn.sendmail(username, target, email_body)
+
+
+def encryptsigned_response(smtp_server, smtp_port, username, password, target):
+    with connect(smtp_server, smtp_port, username, password) as conn:
+        email_body = "Subject: SIGNED AND ENCRYPTED.\nSUCCESS!! YOU GOT IT!"
+        conn.sendmail(username, target, email_body)
+
 @contextmanager
 def connect(smtp_server, smtp_port, username, password):
     try:
