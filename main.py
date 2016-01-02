@@ -11,13 +11,13 @@ def form_response(msg, config):
     regexp_enc = re.compile(r'BEGIN PGP MESSAGE')
     regexp_sig = re.compile(r'BEGIN PGP SIGNED')
 
-    if regexp_enc.search(str(msg)) is not None:
+    if regexp_enc.search(str(msg)):
         encrypted_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
         decrypted_response = msg  ## decrypt here TODO
-        if regexp_sig.search(str(decrypted_response)) is not None:
+        if regexp_sig.search(str(decrypted_response)):
             ## check valid sig TODO
             encryptsigned_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
-    elif regexp_sig.search(str(msg)) is not None:
+    elif regexp_sig.search(str(msg)):
         ## check valid sig TODO
         signed_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
     elif msg['Content-Type'].split(';')[0] == 'text/plain':
