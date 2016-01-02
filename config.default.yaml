@@ -1,0 +1,3 @@
+pop3-server: example.com
+username: test@example.com
+password: very_secure_password
