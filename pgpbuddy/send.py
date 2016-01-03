@@ -30,7 +30,7 @@ def get_message(response_code):
     msg = MIMEMultipart('alternative')
     msg['From'] = 'pgpbuddy'
     msg['Subject'] = subject[response_code]
-    body_text = MIMEText(content[eresponse_code], 'plain')
+    body_text = MIMEText(content[response_code], 'plain')
     msg.attach(body_text)
     return msg
 
