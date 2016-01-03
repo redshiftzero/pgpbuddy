@@ -1,27 +1,27 @@
 import yaml
 import pdb
-import re
 from pgpbuddy.fetch import fetch_messages
 from pgpbuddy.send import (plaintext_response, encrypted_response,
                            signed_response, encryptsigned_response)
+from pgpbuddy.crytpo import init_gpg, is_encrypted, is_signed, decrypt_message
 
 
-def form_response(msg, config):
-    target = msg['From']
-    regexp_enc = re.compile(r'BEGIN PGP MESSAGE')
-    regexp_sig = re.compile(r'BEGIN PGP SIGNED')
+def select_response(gpg, msg):
+    if is_encrypted(msg):
+        decrypted_message = decrypt_message(gpg, msg)
 
-    if regexp_enc.search(str(msg)):
-        encrypted_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
-        decrypted_response = msg  ## decrypt here TODO
-        if regexp_sig.search(str(decrypted_response)):
+        if is_signed(decrypted_message):
             ## check valid sig TODO
-            encryptsigned_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
-    elif regexp_sig.search(str(msg)):
+            return encryptsigned_response
+        else:
+            return encrypted_response
+
+    elif is_signed(msg):
         ## check valid sig TODO
-        signed_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
+        return signed_response
+
     elif msg['Content-Type'].split(';')[0] == 'text/plain':
-        plaintext_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
+        return plaintext_response
 
     return None
 
@@ -29,9 +29,13 @@ def form_response(msg, config):
 def load():
     with open("config.yaml", 'r') as config:
         config = yaml.load(config)
+        gpg = init_gpg(config["gnupghome"])
+
         messages = fetch_messages(config["pop3-server"], config["username"], config["password"])
         for msg in messages:
-            form_response(msg, config)
+            target = msg["From"]
+            respond = select_response(gpg, msg)
+            respond(config["smtp-server"], config["smtp-port"], config["username"], config["password"], target)
 
     return None
 
