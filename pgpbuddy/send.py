@@ -2,29 +2,47 @@ from contextlib import contextmanager
 import smtplib
 import gnupg
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
-def plaintext_response(smtp_server, smtp_port, username, password, target):
+
+content = {'signed_success': 'Welcome to PGPBuddy! You\'ve correctly signed an email to me!',
+    'encrypted_signed_success': 'You\'ve correctly signed and encrypted an email to me!',
+    'encrypted_success': 'You\'ve correctly encrypted an email to me!',
+    'plaintext': ('Welcome to PGPBuddy! It looks like you\'ve sent plaintext '
+                  '(clear, unencrypted text).\n\n'
+                  'To get started, set up PGP using one of these tutorials from '
+                  'the Electronic Frontier Foundation: \n\n'
+                  'Windows: https://ssd.eff.org/en/module/how-use-pgp-windows\n'
+                  'Mac OS X: https://ssd.eff.org/en/module/how-use-pgp-mac-os-x\n'
+                  'Linux: https://ssd.eff.org/en/module/how-use-pgp-linux\n\n'
+                  'Once you have your key ready, send me an encrypted and/or signed '
+                  'email and I\'ll check things are working!'),
+    'signed_fail': 'Sorry, I can not verify your signature.'}
+
+
+subject = {'signed_success': 'PGP email successfully signed! (not encrypted)',
+    'encrypted_signed_success': 'PGP email successfully signed and encrypted!',
+    'encrypted_success': 'PGP email successfully encrypted! (not signed)',
+    'plaintext': 'Unencrypted, unsigned email detected',
+    'signed_fail': 'PGP email signature could not be verified'}
+
+
+def get_message(response_code):
+    msg = MIMEMultipart('alternative')
+    msg['From'] = 'pgpbuddy'
+    msg['Subject'] = subject[response_code]
+    body_text = MIMEText(content[response_code], 'plain')
+    msg.attach(body_text)
+    return msg
+
+
+def send_response(smtp_server, smtp_port, username, password, target, msg):
     with connect(smtp_server, smtp_port, username, password) as conn:
-        email_body = "Subject: PLAINTEXT.\nYOU'VE SENT PLAINTEXT"
-        conn.sendmail(username, target, email_body)
+        msg['To'] = target
+        conn.sendmail(username, target, msg.as_string())
+    return None
 
-
-def encrypted_response(smtp_server, smtp_port, username, password, target):
-    with connect(smtp_server, smtp_port, username, password) as conn:
-        email_body = "Subject: ENCRYPTED.\nSUCCESS!! YOU'VE SENT ENCRYPTED"
-        conn.sendmail(username, target, email_body)
-
-
-def signed_response(smtp_server, smtp_port, username, password, target):
-    with connect(smtp_server, smtp_port, username, password) as conn:
-        email_body = "Subject: SIGNED.\nSUCCESS!! YOU'VE SENT A SIGNED MESSAGE!!"
-        conn.sendmail(username, target, email_body)
-
-
-def encryptsigned_response(smtp_server, smtp_port, username, password, target):
-    with connect(smtp_server, smtp_port, username, password) as conn:
-        email_body = "Subject: SIGNED AND ENCRYPTED.\nSUCCESS!! YOU GOT IT!"
-        conn.sendmail(username, target, email_body)
 
 @contextmanager
 def connect(smtp_server, smtp_port, username, password):

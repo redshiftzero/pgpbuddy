@@ -42,7 +42,7 @@ def decrypt(gpg, msg):
     return gpg.decrypt(data)
 
 
-def import_public_key(gpg, sender):
+def download_public_key(gpg, sender):
     keys = gpg.search_keys(sender, "pgp.mit.edu")
     if not keys:
         raise NoMatchingPublicKey()
@@ -54,7 +54,7 @@ def import_public_key(gpg, sender):
 def verify_signature(gpg, msg):
     data = msg.get_payload()
     result = gpg.verify(data)
-    if not result.trust_level:
+    if not result.trust_text:
         raise InvalidSignature()
 
 

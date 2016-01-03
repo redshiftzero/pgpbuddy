@@ -1,5 +1,7 @@
 # project-specific ignores
 config.yaml
+.idea
+credentials
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
