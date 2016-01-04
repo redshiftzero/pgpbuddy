@@ -1,21 +1,56 @@
 from contextlib import contextmanager
 import shutil
 import tempfile
-import re
 from os import path
+from enum import Enum
 
 import gnupg
 
+PublicKey = Enum('PublicKey', 'available not_available')
+Signature = Enum('Signature', 'correct incorrect missing')
+Encryption = Enum('Encryption', 'correct incorrect missing')
 
-class NoMatchingPublicKey(Exception):
-    pass
+
+def import_public_key(gpg, sender):
+    keys = gpg.search_keys(sender, "pgp.mit.edu")
+    if not keys:
+        return PublicKey.not_available
+
+    # add keys to keyring
+    for key in keys:
+        gpg.recv_keys("pgp.mit.edu", key["keyid"])
+
+    return PublicKey.available
 
 
-class InvalidSignature(Exception):
-    pass
+def decrypt(gpg, msg):
+    data = msg.get_payload()
+    result = gpg.decrypt(data)
 
-regexp_enc = re.compile(r'BEGIN PGP MESSAGE')
-regexp_sig = re.compile(r'BEGIN PGP SIGNED')
+    if result.ok and result.status == "decryption ok":
+        return Encryption.correct
+
+    if result.status == "decryption failed":
+        return Encryption.incorrect
+
+    return Encryption.missing
+
+
+def verify_signature(gpg, msg):
+    data = msg.get_payload()
+
+    # first verify signature assuming that the message has been encrypted
+    result = gpg.decrypt(data)
+    if result.trust_text:
+        return Signature.correct
+
+    # this failed, try again but assume it has not been encrypted
+    result = gpg.verify(data)
+    if result.trust_text:
+        return Signature.correct
+
+    return Signature.missing   # todo is this correct? when does incorrect happen?
+
 
 @contextmanager
 def init_gpg(path_to_buddy_keyring):
@@ -23,39 +58,6 @@ def init_gpg(path_to_buddy_keyring):
         gpg = gnupg.GPG(gnupghome=gnupghome)
         gpg.encoding = 'utf-8'
         yield gpg
-
-
-def is_encrypted(msg):
-    if regexp_enc.search(str(msg)):
-        return True
-    return False
-
-
-def is_signed(msg):
-    if regexp_sig.search(str(msg)):
-        return True
-    return False
-
-
-def decrypt(gpg, msg):
-    data = msg.get_payload()
-    return gpg.decrypt(data)
-
-
-def download_public_key(gpg, sender):
-    keys = gpg.search_keys(sender, "pgp.mit.edu")
-    if not keys:
-        raise NoMatchingPublicKey()
-    # add keys to keyring
-    for key in keys:
-        gpg.recv_keys("pgp.mit.edu", key["keyid"])
-
-
-def verify_signature(gpg, msg):
-    data = msg.get_payload()
-    result = gpg.verify(data)
-    if not result.trust_text:
-        raise InvalidSignature()
 
 
 @contextmanager
@@ -73,4 +75,3 @@ def temp_pgp_dir(gpghome):
     finally:
         # automatically delete the directory
         shutil.rmtree(tmpdir)
-        pass
