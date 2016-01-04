@@ -17,13 +17,15 @@ content = {'signed_success': 'Welcome to PGPBuddy! You\'ve correctly signed an e
                   'Mac OS X: https://ssd.eff.org/en/module/how-use-pgp-mac-os-x\n'
                   'Linux: https://ssd.eff.org/en/module/how-use-pgp-linux\n\n'
                   'Once you have your key ready, send me an encrypted and/or signed '
-                  'email and I\'ll check things are working!')}
+                  'email and I\'ll check things are working!'),
+    'signed_fail': 'Sorry, I can not verify your signature.'}
 
 
 subject = {'signed_success': 'PGP email successfully signed! (not encrypted)',
     'encrypted_signed_success': 'PGP email successfully signed and encrypted!',
     'encrypted_success': 'PGP email successfully encrypted! (not signed)',
-    'plaintext': 'Unencrypted, unsigned email detected'}
+    'plaintext': 'Unencrypted, unsigned email detected',
+    'signed_fail': 'PGP email signature could not be verified'}
 
 
 def get_message(response_code):
