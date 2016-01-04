@@ -1,0 +1,88 @@
+digraph gpgbot {
+
+rotate=90
+ratio=fill
+edge [fontsize=10]
+node [fontsize=10]
+
+Plain [label="Is it plaintext?"]
+
+PlainSigned [label="Is signed?"]
+
+TryDecrypt [label="Try to decrypt"]
+
+Plain->PlainSigned [label="Yes"]
+Plain->TryDecrypt [label="No"]
+
+FailDecryptSeeKeyAttached [label="Is key attached?"]
+SuccessDecryptSeeKeyAttached [label="Is key attached?"]
+FailDecryptGetKey [label="Get key from keyserver"]
+SuccessDecryptGetKey [label="Get key from keyserver"]
+
+TryDecrypt->FailDecryptSeeKeyAttached [label="Fails"]
+
+TryDecrypt->AlsoCheckSig [label="Success"]
+AlsoCheckSig->SuccessDecryptSeeKeyAttached [label="No"]
+AlsoCheckSig [label="Is signed?"]
+AlsoCheckSig->CipherSignSeeKeyAttached [label="Yes"]
+CipherSignSeeKeyAttached->CipherSignTryToVerify [label="Yes"]
+CipherSignSeeKeyAttached->CipherSignGetKey [label="No"] 
+CipherSignGetKey->ResponseD [label="Not found"]
+CipherSignGetKey->CipherSignTryToVerify [label="Found"] 
+
+CipherSignTryToVerify->ResponseF [label="Verified"]
+CipherSignTryToVerify->ResponseD [label="Not verified"]
+
+CipherSignGetKey [label="Get key from keyserver"]
+CipherSignSeeKeyAttached [label="Is key attached?"]
+CipherSignTryToVerify [label="Try to verify sig"]
+
+ResponseJ [label="J",
+    shape="square"]
+ResponseI [label="I",
+    shape="square"]
+ResponseH [label="H",
+    shape="square"]
+ResponseG [label="G",
+    shape="square"]
+
+FailDecryptSeeKeyAttached->FailDecryptGetKey [label="No"]
+FailDecryptSeeKeyAttached->ResponseI [label="Yes"]
+FailDecryptGetKey->ResponseJ [label="Not found"]
+FailDecryptGetKey->ResponseI [label="Found"]
+
+SuccessDecryptSeeKeyAttached->SuccessDecryptGetKey [label="No"]
+SuccessDecryptSeeKeyAttached->ResponseH [label="Yes"]
+SuccessDecryptGetKey->ResponseH [label="Found"]
+SuccessDecryptGetKey->ResponseG [label="Not found"]
+
+ResponseA [label="A",
+    shape="square"]
+
+PlainSigned->ResponseA [label="No"]
+PlainSigned->PlainSeeKeyAttached [label="Yes"]
+PlainSeeKeyAttached->PlainGetKey [label="No"]
+
+PlainSeeKeyAttached [label="Is key attached?"]
+PlainGetKey [label="Get key from keyserver"]
+
+ResponseB [label="B",
+    shape="square"]
+ResponseC [label="C",
+    shape="square"]
+ResponseD [label="D",
+    shape="square"]
+ResponseE [label="E",
+    shape="square"]
+ResponseF [label="F",
+    shape="square"]
+
+PlainCheckSig [label="Try to verify sig"]
+
+PlainSeeKeyAttached->PlainCheckSig [label="Yes"]
+PlainCheckSig->ResponseE [label="Verified"]
+PlainCheckSig->ResponseC [label="Not verified"]
+PlainGetKey->ResponseB [label="Not found"]
+PlainGetKey->PlainCheckSig[label="Found"]
+ 
+}
