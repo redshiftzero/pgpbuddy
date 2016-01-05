@@ -17,7 +17,6 @@ def select_response(gpg, msg):
 
     print(msg["Subject"])
     print(response["Subject"]+"\n")
-    print(response)
 
     return response
 
