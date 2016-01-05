@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-from pgpbuddy.crypto import PublicKey, Signature, Encryption
+from pgpbuddy.crypto import PublicKey, Signature, Encryption, sign_and_or_decrypt_message
 from pgpbuddy.util import compile_lookup_table
 
 
@@ -60,12 +60,16 @@ default_content = "Had trouble parsing your message. sorry. good luck."
 content = compile_lookup_table(content)
 subject = compile_lookup_table(subject)
 
-def get_response_message(key_status, encryption_status, signature_status):
+
+def get_response_message(target, gpg, key_status, encryption_status, signature_status):
     msg = MIMEMultipart('alternative')
     msg['From'] = 'pgpbuddy'
     msg['Subject'] = subject[(encryption_status.value, signature_status.value)]
-    body_text = MIMEText(content[(encryption_status.value, signature_status.value)], 'plain')
+    body_text = content[(encryption_status.value, signature_status.value)]
+    body_text = sign_and_or_decrypt_message(target, body_text, gpg, key_status, encryption_status, signature_status)
+    body_text = MIMEText(body_text, 'plain')
     msg.attach(body_text)
+
     return msg
 
 

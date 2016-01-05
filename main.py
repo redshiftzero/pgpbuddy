@@ -12,10 +12,12 @@ def select_response(gpg, msg):
     encryption_status = decrypt(gpg, msg)
     signature_status = verify_signature(gpg, msg)
 
-    response = get_response_message(key_status, encryption_status, signature_status)
+    target = msg["From"]
+    response = get_response_message(target, gpg, key_status, encryption_status, signature_status)
 
     print(msg["Subject"])
     print(response["Subject"]+"\n")
+    print(response)
 
     return response
 
