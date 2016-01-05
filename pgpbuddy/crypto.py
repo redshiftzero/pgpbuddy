@@ -77,46 +77,6 @@ def sign_and_or_decrypt_message(target, body_text, gpg, key_status, encryption_s
     # for all other cases, just sign the message
     return sign()
 
-    """
-    if encryption_status == Encryption.missing:
-        if signature_status == Signature.missing:
-            # A: Plaintext with no signature.
-            return body_text
-        if signature_status != Signature.missing and key_status == PublicKey.not_available:
-            # B: Plaintext with signature but cannot find their public key to verify the signature.
-            return sign(body_text)
-        if signature_status == Signature.incorrect:
-            # C: Plaintext with signature but signature fails to verify
-            return sign(body_text)
-        if signature_status == Signature.correct:
-            # E: Plaintext with signature and signature verifies.
-            return sign(body_text)
-
-    elif encryption_status == Encryption.incorrect:
-        if key_status == PublicKey.not_available:
-            # J: Ciphertext, decryption fails, and we can't find their public key.
-            return sign(body_text)
-        if key_status == PublicKey.available:
-            # I: Ciphertext, decryption fails. Return failure and reason why decrypt fails.
-            return encrypt_and_sign(body_text)
-
-    elif encryption_status == Encryption.correct:
-        if signature_status == Signature.missing:
-            if key_status == PublicKey.available:
-                # H: Unsigned ciphertext and we found their key.
-                return encrypt_and_sign(body_text)
-            if key_status == PublicKey.not_available:
-                # G: Unsigned ciphertext with key not found.
-                return sign(body_text)
-        if signature_status != Signature.missing:
-            if signature_status == Signature.correct:
-                # F: Signed ciphertext with key found and signature verified
-                return encrypt_and_sign(body_text)
-            else:
-                # D: Signed ciphertext with signature not verified either because of an error or because we cannot find their key.
-                return sign(body_text)
-    """
-
 
 @contextmanager
 def init_gpg(path_to_buddy_keyring):
