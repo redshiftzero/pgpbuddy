@@ -52,6 +52,32 @@ def verify_signature(gpg, msg):
     return Signature.missing   # todo is this correct? when does incorrect happen?
 
 
+def sign_and_or_decrypt_message(target, body_text, gpg, key_status, encryption_status, signature_status):
+    def encrypt_and_sign():
+        # as per python_gnupgp documentation, recipient must be trusted, otherwise pgp call silently fails
+        return gpg.encrypt(body_text, recipients=target, always_trust=True, sign=True).data.decode("UTF-8")
+
+    def sign():
+        return gpg.sign(body_text).data.decode("UTF-8")
+
+    # A: Plaintext with no signature.
+    if encryption_status == Encryption.missing and signature_status == Signature.missing:
+        return body_text
+
+    # I: Ciphertext, decryption fails. Key is available
+    if encryption_status == Encryption.incorrect and key_status == PublicKey.available:
+        return encrypt_and_sign()
+    # H: Unsigned ciphertext and we found their key.
+    if encryption_status == Encryption.correct and signature_status == Signature.missing and key_status == PublicKey.available:
+        return encrypt_and_sign()
+    # F: Signed ciphertext with key found and signature verified
+    if encryption_status == Encryption.correct and signature_status == Signature.correct:
+        return encrypt_and_sign()
+
+    # for all other cases, just sign the message
+    return sign()
+
+
 @contextmanager
 def init_gpg(path_to_buddy_keyring):
     with temp_pgp_dir(path_to_buddy_keyring) as gnupghome:

@@ -37,7 +37,7 @@ Here are all the possible responses that PGPBuddy can return:
 * Response B: Plaintext with signature but cannot find their public key to verify the signature. Response is signed but not encrypted.
 * Response C: Plaintext with signature but signature fails to verify. Return reason why the signature verification failed. Response is signed but not encrypted (in case the reason the signature failed is because we have the wrong key). 
 * Response D: Signed ciphertext with signature not verified either because of an error or because we cannot find their key. Response is signed but not encrypted. 
-* Response E: Plaintext with signature and signature verifies. Return success! Return signed and encrypted response. 
+* Response E: Plaintext with signature and signature verifies. Return success! Return signed and but not encrypted. 
 * Response F: Signed ciphertext with key found and signature verified. Return success! Return signed and encrypted response.
 * Response G: Unsigned ciphertext with key not found. Return success and note that the message is unsigned. Response is signed but not encrypted (since we cannot find their key). 
 * Response H: Unsigned ciphertext and we found their key. Return success and note that the message is unsigned. Response is encrypted and signed. 
