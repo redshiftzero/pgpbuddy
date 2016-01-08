@@ -8,24 +8,16 @@ Want to set up PGP but don't know how? PGPbuddy is here to help! Email PGPbuddy 
 
 # Configuration
 
-Best is to make a new user for running pgpbuddy. This ensures that buddy will only have access to its own 
-private key and not your keys. 
+Best is to generate a new set of public + private keys for buddy. Run the following
 
-To extract buddy's key from an existing keyring into it's own clean keyring, run:
-
-    gpg --export-secret-keys -a buddy_keyid > buddy_private_key.asc
-    gpg --export -a buddy_keyid > buddy_public_key.asc
-    su - pgpbuddy
-    gpg --import buddy_private_key.asc
-    gpg --import buddy_public_key.asc
-    rm buddy_private_key.asc
-    rm buddy_public_key.asc
-
+    mkdir credentials
+    gpg --gen-key --homedir credentials
+    
 Generate a new config file by runnning
 
     cp config.default.yaml config.yaml
 
-and in `config.yaml` set your email server parameters and the directory that contains buddy's keyrings.
+and in `config.yaml` set your email server parameters and the directory that contains buddy's keyrings (e.g. `credentials`).
 
 # Bot Logic
 
