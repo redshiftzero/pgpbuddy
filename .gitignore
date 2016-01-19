@@ -2,6 +2,10 @@
 config.yaml
 .idea
 credentials
+tests/test_credentials/buddy
+tests/test_credentials/user1
+tests/test_credentials/user2
+tests/test_credentials/expired*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
