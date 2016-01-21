@@ -46,6 +46,7 @@ def decrypt_wrong_recipient():
     log_decrypt_response(decrypted)
 
 
+
 def verify_plain_text():
     data = "this is a plain text message"
     response = verify(data, "user1")
@@ -71,7 +72,7 @@ def verify_public_key_unknown():
     print("##### Signed, unknown public key")
     log_verify_response(response)
 
-
+"""
 def verify_expired_key():   # library does not seem to pick up on expired key
     signed = path.join(credentials_dir, "expired.sig")
     with open(signed, "rb") as signed:
@@ -80,7 +81,7 @@ def verify_expired_key():   # library does not seem to pick up on expired key
 
     print("##### Signed, with expired key")
     log_verify_response(response)
-
+"""
 
 def decrypt_and_verify_correct():
     data = "this will be encrypted and signed"
@@ -115,6 +116,15 @@ def decrypt_and_verify_wrong_recipient_unknown_public_key():
     response = decrypt_and_verify(encrypted_signed, sender="user2", recipient="user2")
 
     print("##### Signed and encrypted, wrong recipient, unkown sender public key (decrypt fails, verify fails)")
+    log_decrypt_response(response)
+
+
+def decrypt_and_verify_only_signed():
+    data = "this will be signed but not encrypted"
+    signed = sign(data, sender="user1")
+    response = decrypt_and_verify(signed, sender="user1", recipient="user2")
+
+    print("##### Signed but not encrypted")
     log_decrypt_response(response)
 
 """
@@ -196,4 +206,4 @@ if __name__ == '__main__':
     decrypt_and_verify_wrong_recipient()
     decrypt_and_verify_unknown_public_key()
     decrypt_and_verify_wrong_recipient_unknown_public_key()
-
+    decrypt_and_verify_only_signed()
