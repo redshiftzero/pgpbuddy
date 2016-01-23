@@ -4,7 +4,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-from pgpbuddy.crypto import PublicKey, Signature, Encryption, sign_and_or_decrypt_message
+from pgpbuddy.crypto import PublicKey, Signature, Encryption, select_response_encryption
 from pgpbuddy.util import compile_lookup_table
 
 
@@ -61,24 +61,21 @@ content = compile_lookup_table(content)
 subject = compile_lookup_table(subject)
 
 
-def get_response_message(target, gpg, key_status, encryption_status, signature_status):
+def create_message(message_recipient, message_subject, message_content):
     msg = MIMEMultipart('alternative')
     msg['From'] = 'pgpbuddy'
-    msg['Subject'] = subject[(encryption_status.value, signature_status.value)]
-    body_text = content[(encryption_status.value, signature_status.value)]
-    body_text = sign_and_or_decrypt_message(target, body_text, gpg, key_status, encryption_status, signature_status)
+    msg['To'] = message_recipient
+    msg['Subject'] = message_subject
+    body_text = message_content
     body_text = MIMEText(body_text, 'plain')
     msg.attach(body_text)
-
     return msg
 
 
 def send_response(smtp_server, smtp_port, username, password, target, msg):
     with connect(smtp_server, smtp_port, username, password) as conn:
-        msg['To'] = target
         conn.sendmail(username, target, msg.as_string())
-    return None
-
+        
 
 @contextmanager
 def connect(smtp_server, smtp_port, username, password):
