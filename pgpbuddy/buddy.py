@@ -1,6 +1,6 @@
 from pgpbuddy.crypto import *
 from pgpbuddy.response import *
-from pgpbuddy.send import create_message
+from pgpbuddy.send import create_message, send_response
 from pgpbuddy.fetch import fetch_messages
 
 
@@ -27,4 +27,4 @@ def check_and_reply_to_messages(config):
         with init_gpg(config["gnupghome"]) as gpg:
             response = handle_message(gpg, msg)
         print(response["Subject"])
-        #send_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], response)
+        send_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], response)
