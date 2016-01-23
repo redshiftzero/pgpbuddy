@@ -33,7 +33,7 @@ def check_encryption_and_signature(gpg, msg):
         return Encryption.missing, Signature.missing
 
     # correct encrypted, signature missing or wrong
-    # todo figure out how to distinguish those to cases
+    # todo figure out how to distinguish those two cases
     if result.status == 'decryption ok' and result.trust_text is None:
         return Encryption.correct, Signature.missing
 
@@ -53,7 +53,9 @@ def check_encryption_and_signature(gpg, msg):
     if result.status == 'no public key':
         return Encryption.misssing, Signature.incorrect
 
-    # todo return good default stuff
+    # todo might want to introduce a fallback response here
+    # also should log result so that we can reproduce later
+    return Encryption.missing, Signature.missing
 
 
 def select_response_encryption(key_status, encryption_status, signature_status):
