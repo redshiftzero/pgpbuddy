@@ -53,9 +53,9 @@ def check_encryption_and_signature(gpg, msg):
     if result.status == 'no public key':
         return Encryption.misssing, Signature.incorrect
 
-    # todo might want to introduce a fallback response here
+    # todo might want to introduce a specific fallback response here
     # also should log result so that we can reproduce later
-    return Encryption.missing, Signature.missing
+    return Encryption.incorrect, Signature.incorrect
 
 
 def select_response_encryption(key_status, encryption_status, signature_status):
