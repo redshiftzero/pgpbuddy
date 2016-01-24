@@ -12,10 +12,14 @@ def fetch_messages(pop3_server, username, password):
 
 
 def retrieve_message(conn, message_id):
+    # messages are counted starting at 1 
     message = conn.retr(message_id+1)[1]
     message = [line.decode("UTF-8") for line in message]
     message = "\n".join(message)
     message = email.message_from_string(message)
+
+    # once buddy has the message we can delete the original
+    conn.dele(message_id+1)
     return message
 
 @contextmanager
