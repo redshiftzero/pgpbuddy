@@ -4,7 +4,7 @@ Want to set up PGP but don't know how? PGPbuddy is here to help! Email PGPbuddy 
 
 # Requirements
 
-    pip install pyyaml python-gnupg
+    pip install pyyaml python-gnupg schedule
 
 # Configuration
 
