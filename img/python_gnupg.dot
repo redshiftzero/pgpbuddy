@@ -1,0 +1,29 @@
+digraph python_gnupg {
+
+ratio=fill
+edge [fontsize=10]
+node [fontsize=10]
+
+Status [label="Crypt.status =", shape="box"]
+
+TrustTextPlain [label="Crypt.trust_text =", shape="box"]
+TrustTextEncrypted [label="Crypt.trust_text =", shape="box"]
+
+ResultPlainUnsigned [label="not encrypted, not signed"]
+ResultEncryptedUnsigned [label="correct encrypted, signature missing or invalid"]
+ResultEncryptedSigned [label="correct encrypted, correct signature"]
+ResultDecryptionFail [label="wrong encrypted, signature missing or invalid"]
+ResultPlainSigned [label="not encrypted, correct signature"]
+ResultPlainSignFail [label="not encrypted, invalid signature"]
+
+Status->TrustTextPlain [label="no data provided"]
+TrustTextPlain -> ResultPlainUnsigned [label="None"]
+
+Status->TrustTextEncrypted [label="decryption ok"]
+TrustTextEncrypted -> ResultEncryptedUnsigned [label="None"]
+TrustTextEncrypted -> ResultEncryptedSigned [label="TRUST_UNDEFINED"]
+
+Status -> ResultDecryptionFail [label="decryption failed"]
+Status -> ResultPlainSigned [label="signature valid"]
+Status -> ResultPlainSignFail [label="no public key"]
+}

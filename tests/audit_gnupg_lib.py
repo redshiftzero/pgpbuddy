@@ -127,6 +127,15 @@ def decrypt_and_verify_only_signed():
     print("##### Signed but not encrypted")
     log_decrypt_response(response)
 
+
+def decrypt_and_verify_only_signed_unknown_public_key():
+    data = "this will be signed but not encrypted, also public key is unknown"
+    signed = sign(data, sender="user1")
+    response = decrypt_and_verify(signed, sender="user2", recipient="buddy")
+
+    print("##### Signed but not encrypted, public key unknown (can not verify)")
+    log_decrypt_response(response)
+
 """
 Bunch of utility functions
 """
@@ -207,3 +216,4 @@ if __name__ == '__main__':
     decrypt_and_verify_unknown_public_key()
     decrypt_and_verify_wrong_recipient_unknown_public_key()
     decrypt_and_verify_only_signed()
+    decrypt_and_verify_only_signed_unknown_public_key()
