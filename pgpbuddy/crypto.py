@@ -12,7 +12,35 @@ Encryption = Enum('Encryption', 'correct incorrect missing')
 ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign')
 
 
-def import_public_key(gpg, sender):
+def import_public_keys_from_attachments(gpg, attachments):
+    def contains_public_key_block(data):
+        data = data.strip().split("\n")
+        if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
+            return True
+        return False
+
+    def decrypt_if_necessary(data):
+        result = gpg.decrypt(data)
+        if result.status == 'decryption_ok':
+            return result.data.decode("UTF-8")
+        else:
+            return data
+
+    def try_import(attachment):
+        payload = attachment.get_payload().decode('UTF-8')
+        payload = decrypt_if_necessary(payload)
+        if contains_public_key_block(payload):
+            result = gpg.import_keys(payload)
+            if result.results[0]['ok'] == '1':
+                return True
+        return False
+
+    imported = [i for i, attach in enumerate(attachments) if try_import(attach)]
+    remaining_attachments = [attach for i, attach in enumerate(attachments) if i not in imported]
+    return remaining_attachments
+
+
+def import_public_keys_from_server(gpg, sender):
     keys = gpg.search_keys(sender, "pgp.mit.edu")
     if not keys:
         return PublicKey.not_available
