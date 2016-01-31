@@ -9,7 +9,9 @@ def handle_message(gpg, message):
     target = header["From"]
 
     attachments = import_public_keys_from_attachments(gpg, attachments)
-    key_status = import_public_keys_from_server(gpg, header["From"])
+    import_public_keys_from_server(gpg, header["From"])
+
+    key_status = check_public_key_available(gpg, header["From"])
     encryption_status, signature_status = check_encryption_and_signature(gpg, body)
 
     response_subject = subject[(encryption_status.value, signature_status.value)]
@@ -29,4 +31,4 @@ def check_and_reply_to_messages(config):
         with init_gpg(config["gnupghome"]) as gpg:
             response = handle_message(gpg, message)
         print(response["Subject"])
-        #send_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], response)
+        send_response(config["smtp-server"], config["smtp-port"], config["username"], config["password"], response)

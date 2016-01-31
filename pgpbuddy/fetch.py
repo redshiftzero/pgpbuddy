@@ -3,10 +3,6 @@ import pyzmail
 import poplib
 
 
-class ErrorParsingMessage(Exception):
-    pass
-
-
 def fetch_messages(pop3_server, username, password):
     with connect(pop3_server, username, password) as conn:
         num_messages = len(conn.list()[1])
@@ -22,16 +18,15 @@ def retrieve_message(conn, message_id):
     message = "\n".join(message)
     message = pyzmail.PyzMessage.factory(message)
 
+
     # once buddy has the message we can delete the original
     conn.dele(message_id+1)
 
     # identify main message body and attachments
-    body = [part for part in message.mailparts if part.is_body == "text/plain"]
+    body = message.text_part
     attachments = [part for part in message.mailparts if not part.is_body]
-    if len(body) > 1:
-        raise ErrorParsingMessage("Several parts of the message could potentially be the body")
 
-    return message, body[0], attachments
+    return message, body, attachments
 
 @contextmanager
 def connect(pop3_server, username, password):

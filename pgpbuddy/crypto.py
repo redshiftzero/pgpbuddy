@@ -21,13 +21,20 @@ def import_public_keys_from_attachments(gpg, attachments):
 
     def decrypt_if_necessary(data):
         result = gpg.decrypt(data)
-        if result.status == 'decryption_ok':
+        if result.status == 'decryption ok':
             return result.data.decode("UTF-8")
         else:
             return data
 
     def try_import(attachment):
-        payload = attachment.get_payload().decode('UTF-8')
+        payload = attachment.get_payload()
+
+        # todo encrypted attachments fail with unicode error
+        try:
+            payload = payload.decode("UTF-8")
+        except UnicodeDecodeError:
+            return False
+
         payload = decrypt_if_necessary(payload)
         if contains_public_key_block(payload):
             result = gpg.import_keys(payload)
@@ -42,14 +49,16 @@ def import_public_keys_from_attachments(gpg, attachments):
 
 def import_public_keys_from_server(gpg, sender):
     keys = gpg.search_keys(sender, "pgp.mit.edu")
-    if not keys:
-        return PublicKey.not_available
-
-    # add keys to keyring
     for key in keys:
         gpg.recv_keys("pgp.mit.edu", key["keyid"])
 
-    return PublicKey.available
+
+def check_public_key_available(gpg, sender):
+    result = gpg.encrypt("blabla", recipients=sender, always_trust=True)
+    if result.ok:
+        return PublicKey.available
+    else:
+        return PublicKey.not_available
 
 
 def check_encryption_and_signature(gpg, msg):
