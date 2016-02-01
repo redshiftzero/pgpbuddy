@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-import email
+import pyzmail
 import poplib
 
 
@@ -16,11 +16,17 @@ def retrieve_message(conn, message_id):
     message = conn.retr(message_id+1)[1]
     message = [line.decode("UTF-8") for line in message]
     message = "\n".join(message)
-    message = email.message_from_string(message)
+    message = pyzmail.PyzMessage.factory(message)
+
 
     # once buddy has the message we can delete the original
     conn.dele(message_id+1)
-    return message
+
+    # identify main message body and attachments
+    body = message.text_part
+    attachments = [part for part in message.mailparts if not part.is_body]
+
+    return message, body, attachments
 
 @contextmanager
 def connect(pop3_server, username, password):
