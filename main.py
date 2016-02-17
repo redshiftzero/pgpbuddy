@@ -1,16 +1,23 @@
 import yaml
 import pdb
-import schedule
 import time
+import logging
 
 from pgpbuddy import buddy
 
 
 if __name__ == '__main__':
+    logging.basicConfig(format="%(asctime)s - %(name)s: %(message)s",
+                        filename="default.log", level=logging.INFO)
+    log = logging.getLogger("PGPBuddy")
+
+    screenlog = logging.StreamHandler(sys.stdout)
+    screenlog.setLevel(logging.DEBUG)
+    log.addHandler(screenlog)
+
     with open("config.yaml", 'r') as config:
         config = yaml.load(config)
 
-    schedule.every(1).minutes.do(buddy.check_and_reply_to_messages(config))
     while True:
-        schedule.run_pending()
-        time.sleep(20)
+        buddy.check_and_reply_to_messages(config)
+        time.sleep(60)

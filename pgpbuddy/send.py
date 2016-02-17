@@ -1,7 +1,11 @@
 from contextlib import contextmanager
 import smtplib
+import logging
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
+
+log = logging.getLogger(__name__)
 
 
 def create_message(recipient, subject, content):
@@ -18,6 +22,8 @@ def create_message(recipient, subject, content):
 def send_response(smtp_server, smtp_port, username, password, msg):
     with connect(smtp_server, smtp_port, username, password) as conn:
         conn.sendmail(username, msg["To"], msg.as_string())
+        log.debug('Sent email successfully')
+
 
 
 @contextmanager
