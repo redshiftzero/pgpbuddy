@@ -19,6 +19,11 @@ Generate a new config file by runnning
 
 and in `config.yaml` set your email server parameters and the directory that contains buddy's keyrings (e.g. `credentials`).
 
+Also generate a revocation certificate in case your keys are lost or compromised and store in a backup location:
+
+	gpg --homedir credentials --output buddyrevoke.asc --gen-revoke buddyskey
+
+	
 # Bot Logic
 
 Here are all the possible responses that PGPBuddy can return:
