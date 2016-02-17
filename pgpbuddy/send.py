@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 
 def create_message(recipient, subject, content):
     msg = MIMEMultipart('alternative')
-    msg['From'] = 'pgpbuddy'
+    msg['From'] = 'PGPBuddy <buddy@pgp.today>'
     msg['To'] = recipient
     msg['Subject'] = subject
     body_text = content
