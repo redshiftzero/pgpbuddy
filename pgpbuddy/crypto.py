@@ -13,36 +13,20 @@ ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign')
 
 
 def import_public_keys_from_attachments(gpg, attachments):
-    def contains_public_key_block(data):
+    def contains_public_key_block(data):  # todo this might be useless input cleaning?
         data = data.strip().split("\n")
         if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
             return True
         return False
 
-    def decrypt_if_necessary(data):
-        result = gpg.decrypt(data)
-        if result.status == 'decryption ok':
-            return result.data.decode("UTF-8")
-        else:
-            return data
-
     def try_import(attachment):
-        payload = attachment.get_payload()
-
-        # todo encrypted attachments fail with unicode error
-        try:
-            payload = payload.decode("UTF-8")
-        except UnicodeDecodeError:
-            return False
-
-        payload = decrypt_if_necessary(payload)
-        if contains_public_key_block(payload):
-            result = gpg.import_keys(payload)
+        if contains_public_key_block(attachment):
+            result = gpg.import_keys(attachment)
             if result.results[0]['ok'] == '1':
                 return True
-        return False
+            return False
 
-    imported = [i for i, attach in enumerate(attachments) if try_import(attach)]
+    imported = [i for i, (attach, _) in enumerate(attachments) if try_import(attach)]
     remaining_attachments = [attach for i, attach in enumerate(attachments) if i not in imported]
     return remaining_attachments
 
@@ -51,6 +35,20 @@ def import_public_keys_from_server(gpg, sender):
     keys = gpg.search_keys(sender, "pgp.mit.edu")
     for key in keys:
         gpg.recv_keys("pgp.mit.edu", key["keyid"])
+
+
+def decrypt_attachment(gpg, data):
+    result = gpg.decrypt(data)
+    if result.status == 'decryption ok':
+        return result.data.decode('UTF-8', "replace"), Encryption.correct
+    elif result.status == 'decryption failed':
+        return data, Encryption.incorrect
+    else:
+        # todo signed attachments are not checked here, consider merging method with check_encryption_and_signature
+        # probably will need to run for attachments twice:
+        #  1. decrypt attachments to be able to import attached, encrypted public keys
+        #  2. check attachment signature
+        return data, Encryption.missing
 
 
 def check_public_key_available(gpg, sender):

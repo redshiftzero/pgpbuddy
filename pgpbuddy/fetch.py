@@ -1,4 +1,7 @@
 from contextlib import contextmanager
+import base64
+import quopri
+
 import pyzmail
 import poplib
 
@@ -14,19 +17,25 @@ def fetch_messages(pop3_server, username, password):
 def retrieve_message(conn, message_id):
     # messages are counted starting at 1 
     message = conn.retr(message_id+1)[1]
-    message = [line.decode("UTF-8") for line in message]
-    message = "\n".join(message)
-    message = pyzmail.PyzMessage.factory(message)
-
+    message = pyzmail.parse.message_from_bytes(b'\n'.join(message))
 
     # once buddy has the message we can delete the original
     conn.dele(message_id+1)
 
     # identify main message body and attachments
     body = message.text_part
-    attachments = [part for part in message.mailparts if not part.is_body]
+    attachments = [decode_attachment(part) for part in message.mailparts if not part.is_body]
 
     return message, body, attachments
+
+
+def decode_attachment(attachment):
+    if attachment.part["Content-Transfer-Encoding"] == "base64":
+        return base64.b64decode(attachment.part.get_payload())
+    elif attachment.part["Content-Transfer-Encoding"] == "quoted-printable":
+        return quopri.decodestring(attachment.part.get_payload()).decode("UTF-8")
+    else:
+        return attachment.part.get_payload(decode=True)
 
 @contextmanager
 def connect(pop3_server, username, password):
