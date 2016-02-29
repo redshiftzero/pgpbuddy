@@ -8,7 +8,9 @@ def handle_message(gpg, message):
     header, body, attachments = message
     target = header["From"]
 
-    attachments = import_public_keys_from_attachments(gpg, attachments)
+    attachments = [decrypt_attachment(gpg, attachment) for attachment in attachments]
+
+    import_public_keys_from_attachments(gpg, attachments)
     import_public_keys_from_server(gpg, header["From"])
 
     key_status = check_public_key_available(gpg, header["From"])
