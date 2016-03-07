@@ -1,6 +1,7 @@
 # project-specific ignores
 config.yaml
 .idea
+*.gpg
 credentials
 tests/test_credentials/buddy
 tests/test_credentials/user1
