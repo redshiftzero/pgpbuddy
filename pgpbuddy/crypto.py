@@ -18,7 +18,11 @@ ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign')
 
 def import_public_keys_from_attachments(gpg, attachments):
     def contains_public_key_block(data):  # todo this might be useless input cleaning?
-        data = data.strip().split("\n")
+        if type(data) == bytes:
+            data = data.decode('UTF-8').strip().split("\n")
+        else:
+            data = data.strip().split("\n")
+
         if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
             return True
         return False
