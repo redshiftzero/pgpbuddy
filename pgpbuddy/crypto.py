@@ -15,14 +15,18 @@ Signature = Enum('Signature', 'correct incorrect missing')
 Encryption = Enum('Encryption', 'correct incorrect missing')
 ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign')
 
+def clean_attachment(data):
+    # this might be useless input cleaning
+    if type(data) == bytes:
+        data = data.decode('UTF-8').strip().split("\n")
+    else:
+        data = data.strip().split("\n")
+    return data
+
 
 def import_public_keys_from_attachments(gpg, attachments):
-    def contains_public_key_block(data):  # todo this might be useless input cleaning?
-        if type(data) == bytes:
-            data = data.decode('UTF-8').strip().split("\n")
-        else:
-            data = data.strip().split("\n")
-
+    def contains_public_key_block(data):
+        data = clean_attachment(data)
         if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
             return True
         return False
@@ -67,38 +71,56 @@ def check_public_key_available(gpg, sender):
         return PublicKey.not_available
 
 
-def check_encryption_and_signature(gpg, msg):
+def contains_signature(attachments):
+    # Check if there is an attached signature
+    for attachment in attachments:
+        cleaned_attach = clean_attachment(attachment[0])
+        if cleaned_attach[0] == "-----BEGIN PGP SIGNATURE-----" and cleaned_attach[-1] == "-----END PGP SIGNATURE-----":
+            return (True, attachment[0])
+    return (False, 'not found')
+
+
+def check_encryption_and_signature(gpg, msg, attachments):
+    # Attachments included as one attachment may contain sig for message body
     data = msg.get_payload()
+
+    # Try to decrypt and verify sigs for inline PGP
     result = gpg.decrypt(data)
+
+    # Try to verify signature for PGP/MIME
+    # TODO: include body in gpg.verify to get sig to verify
+    (sig_attached, sig_attachment) = contains_signature(attachments)
+    if sig_attached:
+        verify_result = gpg.verify(sig_attachment)
 
     # plain text message
     if result.status == 'no data was provided' and result.trust_text is None:
-        return Encryption.missing, Signature.missing
+        return Encryption.missing, Signature.missing, ''
 
     # correct encrypted, signature missing or wrong
     # todo figure out how to distinguish those two cases
     if result.status == 'decryption ok' and result.trust_text is None:
-        return Encryption.correct, Signature.missing
+        return Encryption.correct, Signature.missing, '' # should return reason in case of wrong
 
     # correct encrypted, correct signature
     if result.status == 'decryption ok' and result.trust_text is not None:
-        return Encryption.correct, Signature.correct
+        return Encryption.correct, Signature.correct, ''
 
     # incorrect encrypted, signature can not be checked
     if result.status == 'decryption failed':
-        return Encryption.incorrect, Signature.missing
+        return Encryption.incorrect, Signature.missing, result.status
 
     # not encrypted, correct signature
     if result.status == 'signature valid':
-        return Encryption.missing, Signature.correct
+        return Encryption.missing, Signature.correct, ''
 
     # not encrypted, could not verify signature - todo there might be other cases here
     if result.status == 'no public key':
-        return Encryption.misssing, Signature.incorrect
+        reason_pubkey = 'we cound not find your public key! Did you attach it or put it on a keyserver?'
+        return Encryption.missing, Signature.incorrect, reason_pubkey
 
-    # todo might want to introduce a specific fallback response here
     log.info("Encryption and Signature incorrect for gpg: {} and msg: {}".format(gpg, msg))
-    return Encryption.incorrect, Signature.incorrect
+    return Encryption.incorrect, Signature.incorrect, result.status
 
 
 def select_response_encryption(key_status, encryption_status, signature_status):
