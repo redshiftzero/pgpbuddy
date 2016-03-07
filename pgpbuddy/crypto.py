@@ -1,10 +1,14 @@
 from contextlib import contextmanager
 import shutil
+import logging
 import tempfile
 from os import path
 from enum import Enum
 
 import gnupg
+
+
+log = logging.getLogger(__name__)
 
 PublicKey = Enum('PublicKey', 'available not_available')
 Signature = Enum('Signature', 'correct incorrect missing')
@@ -89,7 +93,7 @@ def check_encryption_and_signature(gpg, msg):
         return Encryption.misssing, Signature.incorrect
 
     # todo might want to introduce a specific fallback response here
-    # also should log result so that we can reproduce later
+    log.info("Encryption and Signature incorrect for gpg: {} and msg: {}".format(gpg, msg))
     return Encryption.incorrect, Signature.incorrect
 
 
