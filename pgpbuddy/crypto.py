@@ -97,10 +97,14 @@ def check_encryption_and_signature(gpg, msg, attachments):
     if result.status == 'no data was provided' and result.trust_text is None:
         return Encryption.missing, Signature.missing, ''
 
-    # correct encrypted, signature missing or wrong
-    # todo figure out how to distinguish those two cases
-    if result.status == 'decryption ok' and result.trust_text is None:
-        return Encryption.correct, Signature.missing, '' # should return reason in case of wrong
+    # correct encrypted, signature missing
+    if result.status == 'decryption ok' and result.trust_text is None and '-----BEGIN PGP SIGNATURE-----' not in result.data.decode('utf-8'):
+        return Encryption.correct, Signature.missing, ''
+
+    # correct encrypted, signature wrong
+    if result.status == 'decryption ok' and result.trust_text is None and '-----BEGIN PGP SIGNATURE-----' in result.data.decode('utf-8'):
+        sig_verify = gpg.verify(result.data)
+        return Encryption.correct, Signature.incorrect, ' the signature failed to verify because {}'.format(sig_verify.status)
 
     # correct encrypted, correct signature
     if result.status == 'decryption ok' and result.trust_text is not None:
