@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 PublicKey = Enum('PublicKey', 'available not_available')
 Signature = Enum('Signature', 'correct incorrect missing')
 Encryption = Enum('Encryption', 'correct incorrect missing')
-ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign')
+ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign encrypt_fails_but_sign')
 
 def clean_attachment(data):
     # this might be useless input cleaning
@@ -131,6 +131,9 @@ def select_response_encryption(key_status, encryption_status, signature_status):
     # I: Ciphertext, decryption fails. Key is available
     if encryption_status == Encryption.incorrect and key_status == PublicKey.available:
         return ResponseEncryption.encrypt_and_sign
+    # D, G: Unsigned ciphertext with key not found. Sign response but cannot encrypt. 
+    if encryption_status == Encryption.correct and key_status == PublicKey.not_available:
+        return ResponseEncryption.encrypt_fails_but_sign
     # H: Unsigned ciphertext and we found their key.
     if encryption_status == Encryption.correct and signature_status == Signature.missing and key_status == PublicKey.available:
         return ResponseEncryption.encrypt_and_sign
@@ -147,6 +150,9 @@ def encrypt_response(gpg, encryption_type, text, recipient):
         return gpg.sign(text).data.decode("UTF-8")
     elif encryption_type == ResponseEncryption.encrypt_and_sign:
         return gpg.encrypt(text, recipients=recipient, always_trust=True, sign=True).data.decode("UTF-8")
+    elif encryption_type == ResponseEncryption.encrypt_fails_but_sign:
+        text += '\n\nNote: We could not find your public key! Was it attached or put on a keyserver?\nWe need your public key to encrypt emails to you.'
+        return gpg.sign(text).data.decode("UTF-8")
     else:
         return text
 
