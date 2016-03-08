@@ -10,6 +10,9 @@ subject = {(Encryption.correct, Signature.correct):
            (Encryption.correct, Signature.missing):
            'PGP email successfully encrypted! (not signed)',
 
+           (Encryption.correct, Signature.incorrect):
+           'PGP email successfully encrypted! (signature not verified)',
+
            (Encryption.missing, Signature.correct):
            'PGP email successfully signed! (not encrypted)',
 
@@ -33,6 +36,9 @@ content = {(Encryption.correct, Signature.correct):
 
            (Encryption.correct, Signature.missing):
            'You\'ve correctly encrypted an email to me!',
+
+           (Encryption.correct, Signature.incorrect):
+           'You\'ve correctly encrypted an email to me! But I was not able to verify your signature...',
 
            (Encryption.incorrect, Signature.missing):
            'You sent me an encrypted mail, but I could not decrypt it',
