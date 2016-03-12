@@ -123,8 +123,7 @@ def check_encryption_and_signature(gpg, msg, attachments):
         reason_pubkey = 'we cound not find your public key! Did you attach it or put it on a keyserver?'
         return Encryption.missing, Signature.incorrect, reason_pubkey
 
-    log.info("Encryption and Signature incorrect for gpg: {} and msg: {}".format(gpg, msg))
-    return Encryption.incorrect, Signature.incorrect, result.status
+    return Encryption.incorrect, Signature.incorrect, 'FAILURE {}'.format(result.status)
 
 
 def select_response_encryption(key_status, encryption_status, signature_status):

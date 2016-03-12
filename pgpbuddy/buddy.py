@@ -1,8 +1,12 @@
+import logging
+
 import pgpbuddy.crypto as crypto
 import pgpbuddy.response as response
 from pgpbuddy.send import create_message, send_response
 from pgpbuddy.fetch import fetch_messages
 
+
+log = logging.getLogger(__name__)
 
 def handle_message(gpg, message):
     header, body, attachments = message
@@ -15,6 +19,10 @@ def handle_message(gpg, message):
 
     key_status = crypto.check_public_key_available(gpg, header["From"])
     encryption_status, signature_status, reason = crypto.check_encryption_and_signature(gpg, body, attachments)
+
+    # Log messages that are not handled
+    if 'FAILURE' in reason:
+        log.info("Encryption and Signature incorrect for message: {}".format(message))
 
     response_subject = response.subject[(encryption_status.value, signature_status.value)]
     response_subject = "{} (Was: {})".format(response_subject, header["Subject"])
