@@ -7,8 +7,11 @@ def compile_lookup_table(lookup_table):
 subject = {(Encryption.correct, Signature.correct):
            'PGP email successfully signed and encrypted!',
 
-           ( Encryption.correct, Signature.missing):
+           (Encryption.correct, Signature.missing):
            'PGP email successfully encrypted! (not signed)',
+
+           (Encryption.correct, Signature.incorrect):
+           'PGP email successfully encrypted! (signature not verified)',
 
            (Encryption.missing, Signature.correct):
            'PGP email successfully signed! (not encrypted)',
@@ -22,7 +25,10 @@ subject = {(Encryption.correct, Signature.correct):
            'I could not decrypt your PGP mail (signed)',
 
            (Encryption.missing, Signature.missing):
-           'Unencrypted, unsigned email detected'}
+           'Unencrypted, unsigned email detected',
+
+           (Encryption.missing, Signature.incorrect):
+           'Unencrypted, signed email not verified!'}
 
 
 content = {(Encryption.correct, Signature.correct):
@@ -31,6 +37,9 @@ content = {(Encryption.correct, Signature.correct):
            (Encryption.correct, Signature.missing):
            'You\'ve correctly encrypted an email to me!',
 
+           (Encryption.correct, Signature.incorrect):
+           'You\'ve correctly encrypted an email to me! But I was not able to verify your signature...',
+
            (Encryption.incorrect, Signature.missing):
            'You sent me an encrypted mail, but I could not decrypt it',
 
@@ -38,6 +47,9 @@ content = {(Encryption.correct, Signature.correct):
 
            (Encryption.missing, Signature.correct):
            'You\'ve correctly signed an email to me!',
+
+           (Encryption.missing, Signature.incorrect):
+           'I was not able to verify your signature...',
 
            (Encryption.missing, Signature.missing):
            ('Welcome to PGPBuddy! It looks like you\'ve sent plaintext '
