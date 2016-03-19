@@ -15,18 +15,14 @@ Signature = Enum('Signature', 'correct incorrect missing')
 Encryption = Enum('Encryption', 'correct incorrect missing')
 ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign encrypt_fails_but_sign')
 
-def clean_attachment(data):
-    # this might be useless input cleaning
-    if type(data) == bytes:
-        data = data.decode('UTF-8').strip().split("\n")
-    else:
-        data = data.strip().split("\n")
-    return data
-
 
 def import_public_keys_from_attachments(gpg, attachments):
     def contains_public_key_block(data):
-        data = clean_attachment(data)
+        # it is a binary attachment, can not contain the PUBLIC KEY block
+        if type(data) == bytes:
+            return False
+
+        data = data.strip().split("\n")
         if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
             return True
         return False
@@ -74,8 +70,11 @@ def check_public_key_available(gpg, sender):
 def contains_signature(attachments):
     # Check if there is an attached signature
     for attachment in attachments:
-        cleaned_attach = clean_attachment(attachment[0])
-        if cleaned_attach[0] == "-----BEGIN PGP SIGNATURE-----" and cleaned_attach[-1] == "-----END PGP SIGNATURE-----":
+        # it is a binary attachment, can not contain the PUBLIC KEY block
+        if type(attachment) == bytes:
+            return (False, 'not found')
+
+        if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
             return (True, attachment[0])
     return (False, 'not found')
 
