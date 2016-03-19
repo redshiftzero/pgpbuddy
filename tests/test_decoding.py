@@ -78,6 +78,16 @@ def test_binary_attachment():
     perform_encoding_test(subject, text, "ascii", original_attachments=[attachment])
 
 
+def test_mixed_attachments():
+    subject = "This is my subject"
+    text = "This is my email"
+    attachments = [generate_text_attachment("Liberté, égalité, fraternité", "UTF-8"),
+                   generate_text_attachment("This is my attachment", "ascii"),
+                   generate_binary_attachment()]
+
+    perform_encoding_test(subject, text, "ascii", original_attachments=attachments)
+
+
 @nottest
 def perform_encoding_test(original_subject, original_text, encoding, body_type="text", original_attachments=[]):
     msg = generate_message(original_subject, original_text, encoding, body_type, original_attachments)
