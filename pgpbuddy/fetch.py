@@ -29,6 +29,11 @@ def retrieve_message(conn, message_id):
 def parse_message(raw_message):
     message = pyzmail.parse.message_from_bytes(b'\n'.join(raw_message))
 
+    # extract and decode relevant parts of header
+    headers = {"Subject": pyzmail.parse.decode_mail_header(message["Subject"]),
+               "To": pyzmail.parse.decode_mail_header(message["To"]),
+               "From": pyzmail.parse.decode_mail_header(message["From"])}
+
     # identify and decode main message body
     if message.text_part:
         body = decode(message.text_part)
@@ -38,7 +43,7 @@ def parse_message(raw_message):
     # decode attachments
     attachments = [decode(part) for part in message.mailparts if not part.is_body]
 
-    return message, body, attachments
+    return raw_message, headers, body, attachments
 
 
 def decode(message_part):

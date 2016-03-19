@@ -92,10 +92,9 @@ def test_mixed_attachments():
 def perform_encoding_test(original_subject, original_text, encoding, body_type="text", original_attachments=[]):
     msg = generate_message(original_subject, original_text, encoding, body_type, original_attachments)
 
-    result_header, result_text, result_attachments = parse_message(msg)
-    result_subject = pyzmail.parse.decode_mail_header(result_header["Subject"])
+    _, result_header, result_text, result_attachments = parse_message(msg)
 
-    assert_equal(original_subject, result_subject)
+    assert_equal(original_subject, result_header["Subject"])
     assert_equal(original_text, result_text)
 
     original_attachments = [att[0] for att in original_attachments]      # first entry in attachment tuple contains text
