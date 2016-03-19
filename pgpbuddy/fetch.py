@@ -43,23 +43,31 @@ def parse_message(raw_message):
 
 def decode(message_part):
     content_transfer_encoding = message_part.part["Content-Transfer-Encoding"]
-    charset = get_charset(message_part.part["Content-Type"])
+    content_type = message_part.part["Content-Type"]
     payload = message_part.part.get_payload()
 
     if content_transfer_encoding == "base64":
-        return base64.b64decode(payload).decode(charset)
+        payload = base64.b64decode(payload)
     elif content_transfer_encoding == "quoted-printable":
-        return quopri.decodestring(payload).decode(charset)
-    else:
+        payload = quopri.decodestring(payload)
+
+    # payload is already properly decoded, usually happens in plain text emails
+    if isinstance(payload, str):
         return payload
+
+    # payload is text, decode with proper charset
+    if is_text(content_type):
+        return payload.decode(get_charset(content_type))
+
+    # payload is probably binary, don't do anything else
+    return payload
+
+
+def is_text(content_type):
+    return re.match( r'text/.*; .*"', content_type)
 
 
 def get_charset(content_type):
-    """
-    Parse out charset from content type string
-    :param content_type: e.g. Content-Type: text/plain; charset="utf-8"
-    :return: detected charset
-    """
     m = re.match( r'text/.*; charset="(.*)"', content_type)
     if m:
         return m.group(1)
