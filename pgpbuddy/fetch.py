@@ -21,7 +21,7 @@ def retrieve_message(conn, message_id):
     message = conn.retr(message_id+1)[1]
 
     # once buddy has the message we can delete the original
-    # conn.dele(message_id+1)
+    conn.dele(message_id+1)
 
     return message
 

@@ -8,8 +8,9 @@ from pgpbuddy.fetch import fetch_messages
 
 log = logging.getLogger(__name__)
 
+
 def handle_message(gpg, message):
-    header, body, attachments = message
+    raw_message, header, body, attachments = message
     target = header["From"]
 
     attachments = [crypto.decrypt_attachment(gpg, attachment) for attachment in attachments]
@@ -22,7 +23,7 @@ def handle_message(gpg, message):
 
     # Log messages that are not handled
     if 'FAILURE' in reason:
-        log.info("Encryption and Signature incorrect for message: {}".format(message))
+        log.info("Encryption and Signature incorrect for message: {}".format(raw_message))
 
     response_subject = response.subject[(encryption_status.value, signature_status.value)]
     response_subject = "{} (Was: {})".format(response_subject, header["Subject"])
@@ -45,5 +46,5 @@ def check_and_reply_to_messages(config):
         with crypto.init_gpg(config["gnupghome"]) as gpg:
             response_full = handle_message(gpg, message)
         print(response_full["Subject"])
-        send_response(config["smtp-server"], config["smtp-port"], config["username"], 
+        send_response(config["smtp-server"], config["smtp-port"], config["username"],
                       config["password"], response_full)
