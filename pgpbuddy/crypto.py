@@ -81,11 +81,15 @@ def contains_signature(attachments):
 
 
 def check_encryption_and_signature(gpg, msg, attachments):
-    # Attachments included as one attachment may contain sig for message body
-    data = msg.get_payload()
+    """
+    :param gpg:
+    :param msg:
+    :param attachments: included as one attachment may contain sig for message body
+    :return:
+    """
 
     # Try to decrypt and verify sigs for inline PGP
-    result = gpg.decrypt(data)
+    result = gpg.decrypt(msg)
 
     # Try to verify signature for PGP/MIME
     # TODO: include body in gpg.verify to get sig to verify
