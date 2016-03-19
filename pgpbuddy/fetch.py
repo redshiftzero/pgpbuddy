@@ -29,8 +29,13 @@ def retrieve_message(conn, message_id):
 def parse_message(raw_message):
     message = pyzmail.parse.message_from_bytes(b'\n'.join(raw_message))
 
-    # identify and decode main message body and attachments
-    body = decode(message.text_part)
+    # identify and decode main message body
+    if message.text_part:
+        body = decode(message.text_part)
+    else:
+        body = decode(message.html_part)
+
+    # decode attachments
     attachments = [decode(part) for part in message.mailparts if not part.is_body]
 
     return message, body, attachments
@@ -51,11 +56,11 @@ def decode(message_part):
 
 def get_charset(content_type):
     """
-    Parse out charset from content type
-    :param content_encoding: content type string, e.g. Content-Type: text/plain; charset="utf-8"
-    :return:
+    Parse out charset from content type string
+    :param content_type: e.g. Content-Type: text/plain; charset="utf-8"
+    :return: detected charset
     """
-    m = re.match( r'text/plain; charset="(.*)"', content_type)
+    m = re.match( r'text/.*; charset="(.*)"', content_type)
     if m:
         return m.group(1)
     else:
