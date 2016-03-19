@@ -21,7 +21,7 @@ def retrieve_message(conn, message_id):
     message = conn.retr(message_id+1)[1]
 
     # once buddy has the message we can delete the original
-    conn.dele(message_id+1)
+    # conn.dele(message_id+1)
 
     return message
 
@@ -64,7 +64,7 @@ def get_charset(content_type):
     if m:
         return m.group(1)
     else:
-        return "ascii"
+        return "UTF-8"
 
 
 @contextmanager

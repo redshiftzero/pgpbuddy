@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from itertools import product
 
-from nose.tools import assert_equal
+from nose.tools import assert_equal, assert_set_equal
 from nose.tools import nottest
 from nose_parameterized import parameterized
 import pyzmail
 
 from pgpbuddy.fetch import parse_message
-
 
 @parameterized(product(["ascii", "latin-1", "UTF-8"], ["text", "html"]))
 def test_only_ascii_characters(encoding, body_type):
@@ -44,25 +43,48 @@ def test_accent_subject(encoding):
     perform_encoding_test(subject, text, encoding)
 
 
-def test_attachment():
-    attachment = [("This is the text content of my attachment", "text", "plain", "name.txt")]
-    #assert(False)
-    pass
+@parameterized(["ascii", "latin-1", "UTF-8"])
+def test_text_attachment_only_ascii_characters(encoding):
+    subject = "This is my subject"
+    text = "This is my email"
+    attachment = generate_text_attachment("This is my attachment", encoding)
+
+    perform_encoding_test(subject, text, encoding, original_attachments=[attachment])
+
+
+@parameterized(["latin-1", "UTF-8"])
+def test_text_attachment_umlaut(encoding):
+    subject = "This is my subject"
+    text = "This is my email"
+    attachment = generate_text_attachment("Gänsefüßchen", encoding)
+
+    perform_encoding_test(subject, text, encoding, original_attachments=[attachment])
+
+
+@parameterized(["latin-1", "UTF-8"])
+def test_text_attachment_accent(encoding):
+    subject = "This is my subject"
+    text = "This is my email"
+    attachment = generate_text_attachment("Liberté, égalité, fraternité", encoding)
+
+    perform_encoding_test(subject, text, encoding, original_attachments=[attachment])
 
 
 @nottest
-def perform_encoding_test(original_subject, original_text, encoding, body_type="text"):
-    msg = generate_message(original_subject, original_text, encoding, body_type)
+def perform_encoding_test(original_subject, original_text, encoding, body_type="text", original_attachments=[]):
+    msg = generate_message(original_subject, original_text, encoding, body_type, original_attachments)
 
     result_header, result_text, result_attachments = parse_message(msg)
     result_subject = pyzmail.parse.decode_mail_header(result_header["Subject"])
 
     assert_equal(original_subject, result_subject)
     assert_equal(original_text, result_text)
-    assert_equal(len(result_attachments), 0)
+
+    original_attachments = [att[0] for att in original_attachments]      # first entry in attachment tuple contains text
+    assert_set_equal(set(original_attachments), set(result_attachments)) # don't care about ordering of attachments
 
 
-def generate_message(subject, text, encoding, body_type):
+def generate_message(subject, text, encoding, body_type, attachments):
     if body_type == "html":
         html = (text, encoding)
         text = None
@@ -78,6 +100,10 @@ def generate_message(subject, text, encoding, body_type):
                                             default_charset=encoding,
                                             text=text,
                                             html=html,
-                                            attachments=[])
+                                            attachments=attachments)
     payload = [p.encode() for p in payload.split("\n")]
     return payload
+
+
+def generate_text_attachment(text, encoding):
+    return text, "text", "plain", "name.txt", encoding
