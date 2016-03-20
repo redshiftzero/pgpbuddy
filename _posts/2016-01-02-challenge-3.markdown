@@ -1,0 +1,12 @@
+---
+layout: default
+modal-id: 3
+date: 2016-01-02
+img: encryption.png
+alt: image-alt
+project-date: January 2016
+client: PGP Buddy
+category: Basic Challenges
+description: <b>Send PGP buddy an encrypted email only</b><br><br>Encrypting emails keeps the content of the emails secret, but does not conceal metadata.<br><br><b>Decrypt the response from PGP Buddy</b><br><br>PGP buddy will try to decrypt your email and let you know if there were problems. In addition, PGP buddy will try to encrypt an email back to you. PGP buddy needs your public key in order to encrypt an email to you, so make sure that you attach your public key or put it on a keyserver.
+
+---

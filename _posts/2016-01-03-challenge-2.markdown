@@ -1,0 +1,12 @@
+---
+layout: default
+modal-id: 2
+date: 2016-01-03
+img: signing.png
+alt: image-alt
+project-date: January 2016
+client: PGP Buddy
+category: Basic Challenges
+description: <b>Send PGP buddy a signed email only.</b> <br><br>Signing emails demonstrates that a message was written by the person who is in control of a given keypair. PGP buddy needs your public key in order to verify the signature, so make sure that you attach your public key or put it on a keyserver.<br><br> <b>Check the signature on the signed response from PGP buddy.</b> <br><br>Read the email from PGP buddy and verify that the signature checks out.
+
+---

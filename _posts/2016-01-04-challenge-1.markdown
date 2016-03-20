@@ -1,0 +1,12 @@
+---
+layout: default
+modal-id: 1
+date: 2016-01-04
+img: welcome.png
+alt: image-alt
+project-date: January 2016
+client: PGP Buddy
+category: Basic Challenges
+description: Send PGP buddy a regular email.<br><br> Then follow the instructions PGP buddy provides in response to set up PGP on your system. 
+
+---

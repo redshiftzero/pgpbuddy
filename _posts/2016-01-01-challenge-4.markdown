@@ -1,0 +1,12 @@
+---
+layout: default
+modal-id: 4
+date: 2016-01-01
+img: both.png
+alt: image-alt
+project-date: January 2016
+client: PGP Buddy
+category: Basic Challenges
+description: <b>Send PGP buddy a signed and encrypted email</b><br><br>Put everything together by both signing and encrypting an email to PGP buddy.<br><br><b>Decrypt the email and check the signature on the signed response</b><br><br>Decrypt and verify the signature on the response from PGP buddy.
+
+---
