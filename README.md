@@ -23,6 +23,10 @@ Also generate a revocation certificate in case your keys are lost or compromised
 
 	gpg --homedir credentials --output buddyrevoke.asc --gen-revoke buddyskey
 
+# To run the tests
+
+    pip install nosetests nose-parametrized
+    nosetests
 	
 # Bot Logic
 
