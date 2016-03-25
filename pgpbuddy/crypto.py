@@ -67,16 +67,15 @@ def check_public_key_available(gpg, sender):
         return PublicKey.not_available
 
 
-def contains_signature(attachments):
-    # Check if there is an attached signature
-    for attachment in attachments:
-        # it is a binary attachment, can not contain the PUBLIC KEY block
-        if type(attachment) == bytes:
-            return (False, 'not found')
+def contains_signature(attachment):
+    # it is a binary attachment, can not contain the PUBLIC KEY block
+    if type(attachment) == bytes:
+        False
 
-        if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
-            return (True, attachment[0])
-    return (False, 'not found')
+    attachment = attachment.strip().split("\n")
+    if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
+        return True
+    return False
 
 
 def check_encryption_and_signature(gpg, msg, attachments):
@@ -161,6 +160,11 @@ def encrypt_response(gpg, encryption_type, text, recipient):
         return gpg.sign(text).data.decode("UTF-8")
     else:
         return text
+
+
+#class CryptResult:
+#    def __init__(self):
+
 
 
 @contextmanager
