@@ -35,12 +35,15 @@ def retrieve_message(conn, message_id):
 
 
 def parse_message(raw_message):
-    message = pyzmail.parse.message_from_bytes(b'\n'.join(raw_message))
+    if isinstance(raw_message, list):
+        raw_message = b'\n'.join(raw_message)
+    message = pyzmail.parse.message_from_bytes(raw_message)
 
     # extract and decode relevant parts of header
     headers = {"Subject": pyzmail.parse.decode_mail_header(message["Subject"]),
                "To": pyzmail.parse.decode_mail_header(message["To"]),
-               "From": pyzmail.parse.decode_mail_header(message["From"])}
+               "From": pyzmail.parse.decode_mail_header(message["From"]),
+               "Content-Type": message.get_content_type()}
 
     # extract and decode body and attachments
     if message.get_content_type() == "multipart/encrypted":
