@@ -14,5 +14,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-msgid "subject: signed_and_encrypted"
+msgid "subject: encryption_correct signature_correct"
 msgstr "PGP email successfully signed and encrypted!"
+
+msgid "subject: encryption_correct signature_missing"
+msgstr "PGP email successfully encrypted! (not signed)"
+
+msgid "subject: encryption_missing signature_missing"
+msgstr "Welcome to PGPBuddy! It looks like you've sent plaintext (clear, unencrypted text). \n\n
+       To get started, set up PGP using one of these tutorials from the Electronic Frontier Foundation: \n\n
+
+       Windows: https://ssd.eff.org/en/module/how-use-pgp-windows\n
+       Mac OS X: https://ssd.eff.org/en/module/how-use-pgp-mac-os-x\n
+       Linux: https://ssd.eff.org/en/module/how-use-pgp-linux\n\n
+       Once you have your key ready, send me an encrypted and/or signed
+       email and I\'ll check things are working!"
