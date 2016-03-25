@@ -7,6 +7,14 @@ import pyzmail
 import poplib
 
 
+class ParsingError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return "Error parsing message, {}".format(self.msg)
+
+
 def fetch_messages(pop3_server, username, password):
     with connect(pop3_server, username, password) as conn:
         num_messages = len(conn.list()[1])
@@ -21,7 +29,7 @@ def retrieve_message(conn, message_id):
     message = conn.retr(message_id+1)[1]
 
     # once buddy has the message we can delete the original
-    conn.dele(message_id+1)
+    # conn.dele(message_id+1)
 
     return message
 
@@ -34,16 +42,42 @@ def parse_message(raw_message):
                "To": pyzmail.parse.decode_mail_header(message["To"]),
                "From": pyzmail.parse.decode_mail_header(message["From"])}
 
+    # extract and decode body and attachments
+    if message.get_content_type() == "multipart/encrypted":
+        body, attachments = parse_smime_message(message)
+    else:
+        body, attachments = parse_pgp_inline_message(message)
+
+    return raw_message, headers, body, attachments
+
+
+def parse_smime_message(message):
+    # multipart/encrypted contains exactly two parts: I) version and other metadata, II) message body
+    # attachements are encrypted and part of the message body
+    if len(message.mailparts) != 2:
+        raise ParsingError("Malformated S/MIME message")
+
+    # body must always be application/octet-stream, there can only be one application/octet stream part
+    possible_bodies = [part for part in message.mailparts if "application/octet-stream" in part.type]
+    if len(possible_bodies) != 1:
+        raise ParsingError("Malformated S/MIME message")
+    body = possible_bodies[0]
+
+    return decode(body), []
+
+
+def parse_pgp_inline_message(message):
     # identify and decode main message body
     if message.text_part:
         body = decode(message.text_part)
-    else:
+    elif message.html_part:
         body = decode(message.html_part)
+    else:
+        raise ParsingError("Email does not contain body")
 
     # decode attachments
     attachments = [decode(part) for part in message.mailparts if not part.is_body]
-
-    return raw_message, headers, body, attachments
+    return body, attachments
 
 
 def decode(message_part):
