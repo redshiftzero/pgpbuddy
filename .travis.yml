@@ -1,0 +1,10 @@
+language: python
+python:
+  - "3.4"
+install:
+  - sudo apt-get update
+  - pip install pyyaml python-gnupg schedule pyzmail
+  - pip install nosetests nose-parametrized pep8
+script:
+- "nosetests -v"
+- pep8 pgpbuddy
