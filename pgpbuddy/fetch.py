@@ -47,14 +47,14 @@ def parse_message(raw_message):
 
     # extract and decode body and attachments
     if message.get_content_type() == "multipart/encrypted":
-        body, attachments = parse_smime_message(message)
+        body, attachments = parse_multipart_encrypted(message)
     else:
         body, attachments = parse_pgp_inline_message(message)
 
     return raw_message, headers, body, attachments
 
 
-def parse_smime_message(message):
+def parse_multipart_encrypted(message):
     # multipart/encrypted contains exactly two parts: I) version and other metadata, II) message body
     # attachements are encrypted and part of the message body
     if len(message.mailparts) != 2:
@@ -106,7 +106,7 @@ def decode(message_part):
 
 
 def is_text(content_type):
-    return re.match( r'text/.*; .*"', content_type)
+    return re.match(r'text/.*; .*', content_type)
 
 
 def get_charset(content_type):
