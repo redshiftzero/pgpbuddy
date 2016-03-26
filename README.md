@@ -7,7 +7,7 @@ Want to set up PGP but don't know how? PGPbuddy is here to help! Email PGPbuddy 
 
 # Requirements
 
-    pip install pyyaml python-gnupg schedule pyzmail
+    pip install -r requirements.txt
 
 # Configuration
 
@@ -28,7 +28,6 @@ Also generate a revocation certificate in case your keys are lost or compromised
 
 # To run the tests
 
-    pip install nosetests nose-parametrized
     nosetests
 	
 # Bot Logic
