@@ -4,7 +4,7 @@ python:
 install:
   - sudo apt-get update
   - pip install pyyaml python-gnupg pyzmail
-  - pip install nose nose-parametrized pep8
+  - pip install nose nose-parameterized pep8
 script:
 - "nosetests -v"
 - pep8 pgpbuddy
