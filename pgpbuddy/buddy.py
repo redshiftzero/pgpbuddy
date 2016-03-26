@@ -1,5 +1,4 @@
 import logging
-import tempfile
 
 import pgpbuddy.crypto as crypto
 import pgpbuddy.response as response
