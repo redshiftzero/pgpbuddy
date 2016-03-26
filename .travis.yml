@@ -7,4 +7,4 @@ install:
   - pip install nose nose-parameterized pep8
 script:
 - "nosetests -v"
-- pep8 pgpbuddy
+#- pep8 pgpbuddy
