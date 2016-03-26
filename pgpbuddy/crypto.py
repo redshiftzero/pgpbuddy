@@ -78,22 +78,14 @@ def contains_signature(attachment):
     return False
 
 
-def check_encryption_and_signature(gpg, msg, attachments):
+def check_encryption_and_signature(gpg, msg):
     """
     :param gpg:
     :param msg:
-    :param attachments: included as one attachment may contain sig for message body
     :return:
     """
 
-    # Try to decrypt and verify sigs for inline PGP
     result = gpg.decrypt(msg)
-
-    # Try to verify signature for PGP/MIME
-    # TODO: include body in gpg.verify to get sig to verify
-    (sig_attached, sig_attachment) = contains_signature(attachments)
-    if sig_attached:
-        verify_result = gpg.verify(sig_attachment)
 
     # plain text message
     if result.status == 'no data was provided' and result.trust_text is None:
@@ -126,6 +118,26 @@ def check_encryption_and_signature(gpg, msg, attachments):
         return Encryption.missing, Signature.incorrect, reason_pubkey
 
     return Encryption.incorrect, Signature.incorrect, 'FAILURE {}'.format(result.status)
+
+
+def verify_external_sig(gpg, data, sig):
+    with tempfile.NamedTemporaryFile() as tmp:
+        tmp.write(sig)
+        tmp.flush()
+        result = gpg.verify_data(tmp.name, data)
+
+    if result.status == 'no data was provided' and result.trust_text is None:
+        return Signature.missing, ''
+
+    if result.status == 'signature valid':
+        return Signature.correct, ''
+
+    if result.status == 'no public key':
+        reason_pubkey = 'we could not find your public key! Did you attach it or put it on a keyserver?'
+        return Signature.incorrect, reason_pubkey
+
+    return Signature.incorrect, 'FAILURE {}'.format(result.status)
+
 
 
 def select_response_encryption(key_status, encryption_status, signature_status):

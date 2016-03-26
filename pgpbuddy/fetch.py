@@ -48,14 +48,16 @@ def parse_message(raw_message):
     # extract and decode body and attachments
     if message.get_content_type() == "multipart/encrypted":
         body, attachments = parse_multipart_encrypted(message)
+    elif message.get_content_type() == "multipart/signed":
+        body, attachments = parse_multipart_signed(raw_message, message)
     else:
-        body, attachments = parse_pgp_inline_message(message)
+        body, attachments = parse_pgp_inline(message)
 
     return raw_message, headers, body, attachments
 
 
 def parse_multipart_encrypted(message):
-    # multipart/encrypted contains exactly two parts: I) version and other metadata, II) message body
+    # multipart/encrypted must contain exactly two parts: I) version and other metadata, II) message body
     # attachements are encrypted and part of the message body
     if len(message.mailparts) != 2:
         raise ParsingError("Malformated S/MIME message")
@@ -69,7 +71,28 @@ def parse_multipart_encrypted(message):
     return decode(body), []
 
 
-def parse_pgp_inline_message(message):
+def parse_multipart_signed(raw_message, parsed_message):
+    # multipart/signed contains several boundaries. this confuses pyzmail.
+    # have to split message manually to find multipart/mixed
+    boundary = parsed_message.get_boundary().encode()
+    parts = raw_message.split(b'\n--'+boundary+b'\n')
+
+    # multipart/signed must contained one and only one multipart/mixed part,
+    possible_bodies = [part for part in parts if b'Content-Type: multipart/mixed' in part]
+    if len(possible_bodies) != 1:
+        raise ParsingError("Malformated S/MIME message")
+    body = possible_bodies[0]
+
+    # multipart/signed must contain one and only one application/pgp-signature
+    # this one pyzmail finds correctly
+    possible_signatures = [part.part.get_payload() for part in parsed_message.mailparts
+                           if part.part.get_content_type() == 'application/pgp-signature']
+    if len(possible_signatures) != 1:
+        raise ParsingError("Malformated S/MIME message")
+
+    return body, possible_signatures
+
+def parse_pgp_inline(message):
     # identify and decode main message body
     if message.text_part:
         body = decode(message.text_part)
