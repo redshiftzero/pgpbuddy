@@ -1,10 +1,13 @@
 # PGPbuddy
 
+![Build Status](https://travis-ci.org/redshiftzero/pgpbuddy.svg)
+
+
 Want to set up PGP but don't know how? PGPbuddy is here to help! Email PGPbuddy and she will help you set up and configure PGP by checking you are properly signing and encrypting messages. 
 
 # Requirements
 
-    pip install pyyaml python-gnupg schedule pyzmail
+    pip install -r requirements.txt
 
 # Configuration
 
@@ -25,7 +28,6 @@ Also generate a revocation certificate in case your keys are lost or compromised
 
 # To run the tests
 
-    pip install nosetests nose-parametrized
     nosetests
 	
 # Bot Logic
