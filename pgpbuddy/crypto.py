@@ -67,34 +67,25 @@ def check_public_key_available(gpg, sender):
         return PublicKey.not_available
 
 
-def contains_signature(attachments):
-    # Check if there is an attached signature
-    for attachment in attachments:
-        # it is a binary attachment, can not contain the PUBLIC KEY block
-        if type(attachment) == bytes:
-            return (False, 'not found')
+def contains_signature(attachment):
+    # it is a binary attachment, can not contain the PUBLIC KEY block
+    if type(attachment) == bytes:
+        return False
 
-        if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
-            return (True, attachment[0])
-    return (False, 'not found')
+    attachment = attachment.strip().split("\n")
+    if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
+        return True
+    return False
 
 
-def check_encryption_and_signature(gpg, msg, attachments):
+def check_encryption_and_signature(gpg, msg):
     """
     :param gpg:
     :param msg:
-    :param attachments: included as one attachment may contain sig for message body
     :return:
     """
 
-    # Try to decrypt and verify sigs for inline PGP
     result = gpg.decrypt(msg)
-
-    # Try to verify signature for PGP/MIME
-    # TODO: include body in gpg.verify to get sig to verify
-    (sig_attached, sig_attachment) = contains_signature(attachments)
-    if sig_attached:
-        verify_result = gpg.verify(sig_attachment)
 
     # plain text message
     if result.status == 'no data was provided' and result.trust_text is None:
@@ -129,6 +120,26 @@ def check_encryption_and_signature(gpg, msg, attachments):
     return Encryption.incorrect, Signature.incorrect, 'FAILURE {}'.format(result.status)
 
 
+def verify_external_sig(gpg, data, sig):
+    with tempfile.NamedTemporaryFile() as tmp:
+        tmp.write(sig)
+        tmp.flush()
+        result = gpg.verify_data(tmp.name, data)
+
+    if result.status == 'no data was provided' and result.trust_text is None:
+        return Signature.missing, ''
+
+    if result.status == 'signature valid':
+        return Signature.correct, ''
+
+    if result.status == 'no public key':
+        reason_pubkey = 'we could not find your public key! Did you attach it or put it on a keyserver?'
+        return Signature.incorrect, reason_pubkey
+
+    return Signature.incorrect, 'FAILURE {}'.format(result.status)
+
+
+
 def select_response_encryption(key_status, encryption_status, signature_status):
     # A: Plaintext with no signature.
     if encryption_status == Encryption.missing and signature_status == Signature.missing:
@@ -161,6 +172,11 @@ def encrypt_response(gpg, encryption_type, text, recipient):
         return gpg.sign(text).data.decode("UTF-8")
     else:
         return text
+
+
+#class CryptResult:
+#    def __init__(self):
+
 
 
 @contextmanager
