@@ -70,7 +70,7 @@ def check_public_key_available(gpg, sender):
 def contains_signature(attachment):
     # it is a binary attachment, can not contain the PUBLIC KEY block
     if type(attachment) == bytes:
-        False
+        return False
 
     attachment = attachment.strip().split("\n")
     if attachment[0] == "-----BEGIN PGP SIGNATURE-----" and attachment[-1] == "-----END PGP SIGNATURE-----":
