@@ -46,25 +46,39 @@ def mock_decrypt(encryption_status, signature_status):
             result.status = 'no data was provided'
             result.trust_text = None
 
-    return lambda data: result
+    return MagicMock(return_value=result)
 
 
 # use this mock to test dealing with unexpected outputs from python_gnupg
 def mock_decrypt_unexpected_output():
     result = MagicMock(gnupg.Crypt)
     result.status = 'random noise'
-    return lambda data: result
+    return MagicMock(return_value=result)
 
 #############################################################################
 # mock import public keys
 ############################################################################
 
 
-def mock_import_keys(success):
-    if success:
-        result = MagicMock(gnupg.ImportResult)
-        result.results = [{'ok': '1'}]
-    else:
-        result = MagicMock(gnupg.ImportResult)
-        result.results = [{'ok': '0'}]
-    return lambda key: result
+def mock_import_keys(list_of_success_indicators):
+    """
+    :param list_of_success_indicators: A boolean or a list of booleans. The i-th element indicates whether
+    import_keys should succeed or fail on the i-th time it is being called.
+    :return:
+    """
+
+    def get_result(success):
+        if success:
+            result = MagicMock(gnupg.ImportResult)
+            result.results = [{'ok': '1'}]
+        else:
+            result = MagicMock(gnupg.ImportResult)
+            result.results = [{'ok': '0'}]
+        return result
+
+    def side_effect(*args):
+        return get_result(list_of_success_indicators.pop(0))
+
+    if not isinstance(list_of_success_indicators, list):
+        list_of_success_indicators = [list_of_success_indicators]
+    return MagicMock(side_effect=side_effect)

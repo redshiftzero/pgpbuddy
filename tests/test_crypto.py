@@ -6,6 +6,7 @@ from nose.tools import assert_list_equal
 from pgpbuddy.crypto import *
 from tests.mock_gpg import *
 
+
 class TestCheckEncryptionAndSignature(TestCase):
 
     @patch('gnupg.GPG', decrypt=mock_decrypt(Encryption.missing, Signature.missing))
@@ -108,7 +109,7 @@ class TestImportKeysFromAttachments(TestCase):
         assert_list_equal(attachments, remaining_attachments)
         assert not gpg.import_keys.called
 
-    @patch('gnupg.GPG', import_keys=mock_import_keys(success=True))
+    @patch('gnupg.GPG', import_keys=mock_import_keys(True))
     def test_one_key_attachment(self, gpg):
         key = self._mock_key("PRETEND THIS IS A KEY")
         attachments = [(key, None)]
@@ -117,8 +118,9 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = []
         assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
 
-    @patch('gnupg.GPG', import_keys=mock_import_keys(success=True))
+    @patch('gnupg.GPG', import_keys=mock_import_keys(True))
     def test_one_key_attachment_one_other(self, gpg):
         key = self._mock_key("PRETEND THIS IS A KEY")
         attachments = [(key, None), ("blablu", None)]
@@ -127,8 +129,9 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = [attachments[1]]
         assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
 
-    @patch('gnupg.GPG', import_keys=mock_import_keys(success=True))
+    @patch('gnupg.GPG', import_keys=mock_import_keys(True))
     def test_one_key_attachment_one_other_different_order(self, gpg):
         key = self._mock_key("PRETEND THIS IS A KEY")
         attachments = [("blablu", None), (key, None)]
@@ -137,3 +140,75 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = [attachments[0]]
         assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys(True))
+    def test_one_key_attachment_several_other(self, gpg):
+        key = self._mock_key("PRETEND THIS IS A KEY")
+        attachments = [("blablu", None), (key, None), ("ladia", None), ("meep", None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = [attachments[0], attachments[2], attachments[3]]
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys(False))
+    def test_one_key_attachment_import_fails(self, gpg):
+        key = self._mock_key("PRETEND THIS IS A KEY")
+        attachments = [(key, None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = attachments
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys(False))
+    def test_one_key_attachment_several_other_import_fails(self, gpg):
+        key = self._mock_key("PRETEND THIS IS A KEY")
+        attachments = [("blablu", None), (key, None), ("ladia", None), ("meep", None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = attachments
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key)
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys([True, True]))
+    def test_two_keys_both_succeed(self, gpg):
+        key1 = self._mock_key("PRETEND THIS IS A KEY")
+        key2 = self._mock_key("PRETEND THIS IS ANOTHER KEY")
+        attachments = [(key1, None), (key2, None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = []
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key1)
+
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys([True, False]))
+    def test_two_keys_first_succeeds(self, gpg):
+        key1 = self._mock_key("PRETEND THIS IS A KEY")
+        key2 = self._mock_key("PRETEND THIS IS ANOTHER KEY")
+        attachments = [(key1, None), (key2, None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = [attachments[1]]
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key1)
+
+
+    @patch('gnupg.GPG', import_keys=mock_import_keys([False, False]))
+    def test_two_keys_none_succeeds(self, gpg):
+        key1 = self._mock_key("PRETEND THIS IS A KEY")
+        key2 = self._mock_key("PRETEND THIS IS ANOTHER KEY")
+        attachments = [(key1, None), (key2, None)]
+
+        remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
+        expected = attachments
+        assert_list_equal(expected, remaining_attachments)
+        assert gpg.import_keys.called_once_with(key1)
