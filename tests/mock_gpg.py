@@ -4,6 +4,9 @@ import gnupg
 
 from pgpbuddy.crypto import Encryption, Signature
 
+############################################################
+# mock decryption
+############################################################
 
 def mock_decrypt(encryption_status, signature_status):
 
@@ -51,3 +54,17 @@ def mock_decrypt_unexpected_output():
     result = MagicMock(gnupg.Crypt)
     result.status = 'random noise'
     return lambda data: result
+
+#############################################################################
+# mock import public keys
+############################################################################
+
+
+def mock_import_keys(success):
+    if success:
+        result = MagicMock(gnupg.ImportResult)
+        result.results = [{'ok': '1'}]
+    else:
+        result = MagicMock(gnupg.ImportResult)
+        result.results = [{'ok': '0'}]
+    return lambda key: result
