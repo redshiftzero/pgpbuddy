@@ -1,7 +1,6 @@
 # PGPbuddy
 
-![Build Status](https://travis-ci.org/redshiftzero/pgpbuddy.svg)
-
+![Build Status](https://travis-ci.org/redshiftzero/pgpbuddy.svg) [![Coverage Status](https://coveralls.io/repos/github/redshiftzero/pgpbuddy/badge.svg?branch=master)](https://coveralls.io/github/redshiftzero/pgpbuddy?branch=master)
 
 Want to set up PGP but don't know how? PGPbuddy is here to help! Email PGPbuddy and she will help you set up and configure PGP by checking you are properly signing and encrypting messages. 
 
