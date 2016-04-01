@@ -78,14 +78,14 @@ def contains_signature(attachment):
     return False
 
 
-def check_encryption_and_signature(gpg, msg):
+def check_encryption_and_signature(gpg, data):
     """
     :param gpg:
-    :param msg:
+    :param data:
     :return:
     """
 
-    result = gpg.decrypt(msg)
+    result = gpg.decrypt(data)
 
     # plain text message
     if result.status == 'no data was provided' and result.trust_text is None:
