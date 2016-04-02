@@ -112,8 +112,7 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = []
         assert_list_equal(expected, remaining_attachments)
-        assert gpg.import_keys.called_once_with(key)
-
+        gpg.import_keys.assert_called_once_with(self.__format_key(key))
 
     @patch('gnupg.GPG', import_keys=mock_import_keys(False))
     def test_key_attachment_import_fails(self, gpg):
@@ -124,7 +123,7 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = attachments
         assert_list_equal(expected, remaining_attachments)
-        assert gpg.import_keys.called_once_with(key)
+        gpg.import_keys.assert_called_once_with(self.__format_key(key))
 
     @patch('gnupg.GPG')
     def test_binary_attachment(self, gpg):
@@ -147,15 +146,50 @@ class TestImportKeysFromAttachments(TestCase):
 
         expected = [attachments[0], attachments[1], attachments[2], attachments[4]]
         assert_list_equal(expected, remaining_attachments)
-        assert gpg.import_keys.called_once_with(key1)
-        assert gpg.import_keys.called_once_with(key2)
-        assert gpg.import_keys.called_once_with(key2)
+        gpg.import_keys.assert_any_call(self.__format_key(key1))
+        gpg.import_keys.assert_any_call(self.__format_key(key2))
+        gpg.import_keys.assert_any_call(self.__format_key(key3))
 
     @patch('gnupg.GPG')
     def test_preserve_encryption_status(self, gpg):
         attachments = [("bla", Encryption.missing), ("blu", Encryption.correct), ("ble", Encryption.incorrect)]
 
         remaining_attachments = import_public_keys_from_attachments(gpg, attachments)
+
         expected = attachments
         assert_list_equal(expected, remaining_attachments)
         assert not gpg.import_keys.called
+
+    @staticmethod
+    def __format_key(key):
+        return key.strip().split("\n")
+
+
+class TestImportFromKeyServer():
+
+    server = 'pgp.mit.edu'
+
+    @patch('gnupg.GPG', search_keys=mock_search_keys([]), recv_keys=mock_recv_keys())
+    def test_no_key_found(self, gpg):
+        sender = "sender@plain.txt"
+        import_public_keys_from_server(gpg, sender)
+
+        gpg.search_keys.assert_called_once_with(sender, self.server)
+        assert not gpg.recv_keys.called
+
+    @patch('gnupg.GPG', search_keys=mock_search_keys(["key1"]), recv_keys=mock_recv_keys())
+    def test_one_key_found(self, gpg):
+        sender = "sender@plain.txt"
+        import_public_keys_from_server(gpg, sender)
+
+        gpg.search_keys.assert_called_once_with(sender, self.server)
+        gpg.recv_keys.assert_called_once_with(self.server, "key1")
+
+    @patch('gnupg.GPG', search_keys=mock_search_keys(["key1", "key2"]), recv_keys=mock_recv_keys())
+    def test_two_keys_found(self, gpg):
+        sender = "sender@plain.txt"
+        import_public_keys_from_server(gpg, sender)
+
+        gpg.search_keys.assert_called_once_with(sender, self.server)
+        gpg.recv_keys.assert_any_call(self.server, "key1")
+        gpg.recv_keys.assert_any_call(self.server, "key2")
