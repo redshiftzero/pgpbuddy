@@ -17,21 +17,21 @@ ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign enc
 
 
 def import_public_keys_from_attachments(gpg, attachments):
-    def contains_public_key_block(data):
+    def try_import(data):
         # it is a binary attachment, can not contain the PUBLIC KEY block
         if isinstance(data, bytes):
             return False
 
+        # check if the usual markers for PUBLIC KEY block are there
         data = data.strip().split("\n")
-        if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
-            return True
-        return False
+        if data[0] != "-----BEGIN PGP PUBLIC KEY BLOCK-----" or data[-1] != "-----END PGP PUBLIC KEY BLOCK-----":
+            return False
 
-    def try_import(attachment):
-        if contains_public_key_block(attachment):
-            result = gpg.import_keys(attachment)
-            if result.results[0]['ok'] == '1':
-                return True
+        # looks like a PUBLIC KEY block, try to import it into keyring and report on results
+        result = gpg.import_keys(data)
+        if result.results[0]['ok'] == '1':
+            return True
+        else:
             return False
 
     imported = [i for i, (attach, _) in enumerate(attachments) if try_import(attach)]
