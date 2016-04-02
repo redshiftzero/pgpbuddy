@@ -19,7 +19,7 @@ ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign enc
 def import_public_keys_from_attachments(gpg, attachments):
     def contains_public_key_block(data):
         # it is a binary attachment, can not contain the PUBLIC KEY block
-        if type(data) == bytes:
+        if isinstance(data, bytes):
             return False
 
         data = data.strip().split("\n")
