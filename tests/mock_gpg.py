@@ -2,12 +2,22 @@ from unittest.mock import MagicMock
 
 import gnupg
 
-from pgpbuddy.crypto import Encryption, Signature
+from pgpbuddy.crypto import Encryption, Signature, PublicKey
 
 
 ############################################################
-# mock decryption
+# mock encryption and decryption
 ############################################################
+
+def mock_encrypt(success):
+    if success:
+        result = MagicMock(gnupg.Crypt)
+        result.ok = True
+    else:
+        result = MagicMock(gnupg.Crypt)
+        result.ok = False
+    return MagicMock(return_value=result)
+
 
 def mock_decrypt(encryption_status, signature_status):
 
@@ -56,7 +66,34 @@ def mock_decrypt_unexpected_output():
     result.status = 'random noise'
     return MagicMock(return_value=result)
 
-#############################################################################
+############################################################################
+# mock verifying data
+############################################################################
+
+
+def mock_verify(signature_status, public_key_status=None):
+    if signature_status == Signature.missing:
+        result = MagicMock(gnupg.Verify)
+        result.valid = False
+        result.status = None
+        result.key_id = None
+    elif signature_status == Signature.incorrect:
+        if public_key_status and public_key_status == PublicKey.not_available:
+            result = MagicMock(gnupg.Verify)
+            result.valid = False
+            result.status = 'no public key'
+        else:
+            result = MagicMock(gnupg.Verify)
+            result.valid = False
+            result.status = 'unexpected data'
+    else:
+        result = MagicMock(gnupg.Verify)
+        result.valid = True
+        result.status = 'signature valid'
+        result.key_id = "1234"
+    return MagicMock(return_value=result)
+
+############################################################################
 # mock import public keys
 ############################################################################
 

@@ -193,3 +193,61 @@ class TestImportFromKeyServer():
         gpg.search_keys.assert_called_once_with(sender, self.server)
         gpg.recv_keys.assert_any_call(self.server, "key1")
         gpg.recv_keys.assert_any_call(self.server, "key2")
+
+
+class TestPublicKeyAvailable(TestCase):
+    @patch('gnupg.GPG', encrypt=mock_encrypt(success=True))
+    def test_available(self, gpg):
+        sender = "sender@plain.text"
+        result = check_public_key_available(gpg, sender)
+
+        assert result == PublicKey.available
+
+    @patch('gnupg.GPG', encrypt=mock_encrypt(success=False))
+    def test_not_available(self, gpg):
+        sender = "sender@plain.text"
+        result = check_public_key_available(gpg, sender)
+
+        assert result == PublicKey.not_available
+
+
+class TestVerifyExternalSig(TestCase):
+    @patch('gnupg.GPG', verify_data=mock_verify(Signature.correct))
+    def test_good_sig(self, gpg):
+        sig = b"good sig"
+        data = "to be signed"
+
+        signature_status, reason = verify_external_sig(gpg, data, sig)
+
+        assert signature_status == Signature.correct
+        assert not reason
+
+    @patch('gnupg.GPG', verify_data=mock_verify(Signature.incorrect, PublicKey.not_available))
+    def test_no_public_key(self, gpg):
+        sig = b"bad sig"
+        data = "to be signed"
+
+        signature_status, reason = verify_external_sig(gpg, data, sig)
+
+        assert signature_status == Signature.incorrect
+        assert reason
+
+    @patch('gnupg.GPG', verify_data=mock_verify(Signature.incorrect, PublicKey.available))
+    def test_bad_sig(self, gpg):
+        sig = b"bad sig"
+        data = "to be signed"
+
+        signature_status, reason = verify_external_sig(gpg, data, sig)
+
+        assert signature_status == Signature.incorrect
+        assert reason
+
+    @patch('gnupg.GPG', verify_data=mock_verify(Signature.missing))
+    def test_no_sig(self, gpg):
+        sig = b"bad sig"
+        data = "to be signed"
+
+        signature_status, reason = verify_external_sig(gpg, data, sig)
+
+        assert signature_status == Signature.missing
+        assert not reason

@@ -1,6 +1,7 @@
 from os import path
 from contextlib import contextmanager
 from unittest import TestCase
+import tempfile
 
 import gnupg
 from nose.tools import nottest
@@ -177,15 +178,49 @@ class TestGnupg(TestCase):
         assert result.key_id != '0'
 
     def test_verify__encrypted(self):
-        data = "this will be signed"
-        signed = encrypt(data, "user1")
+        data = "this will be encrypted"
+        encrypted = encrypt(data, "user1")
 
-        result = verify(signed, "user1")
-        log_verify_response(result)
+        result = verify(encrypted, "user1")
 
         assert not result.valid
         assert result.status == 'unexpected data'
         assert result.key_id == '0'
+
+    def test_verify__external_sig(self):
+        data = "this will be signed"
+        signed = sign(data, "user1")
+        sig = b'\n'.join(signed.split(b'\n')[4:15])
+
+        result = verify_external_sig(data, sig, "user1")
+
+        assert result.valid
+        assert result.status == 'signature valid'
+        assert result.key_id
+        assert result.key_id != '0'
+
+    def test_verify__external_sig__public_key_unknown(self):
+        data = "this will be signed"
+        signed = sign(data, "user1")
+        sig = b'\n'.join(signed.split(b'\n')[4:15])
+
+        result = verify_external_sig(data, sig, "buddy")
+
+        assert not result.valid
+        assert result.status == 'no public key'
+        assert result.key_id
+        assert result.key_id != '0'
+
+    def test_verify__external_sig__random_content(self):
+        data = "this will be signed"
+        sig = b'this is not actually a sig'
+
+        result = verify_external_sig(data, sig, "buddy")
+        log_verify_response(result)
+
+        assert not result.valid
+        assert result.status is None
+        assert result.key_id is None
 
 """
 Bunch of utility functions
@@ -222,6 +257,14 @@ def sign(text, sender):
 def verify(text, sender):
     gpg = init_gpg(sender)
     return gpg.verify(text)
+
+
+def verify_external_sig(text, sig, sender):
+    gpg = init_gpg(sender)
+    with tempfile.NamedTemporaryFile() as tmp:
+        tmp.write(sig)
+        tmp.flush()
+        return gpg.verify_data(tmp.name, text.encode())
 
 
 def encrypt_and_sign(text, recipient, sender):
