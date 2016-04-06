@@ -17,21 +17,21 @@ ResponseEncryption = Enum('ResponseEncryption', 'plain sign encrypt_and_sign enc
 
 
 def import_public_keys_from_attachments(gpg, attachments):
-    def contains_public_key_block(data):
+    def try_import(data):
         # it is a binary attachment, can not contain the PUBLIC KEY block
-        if type(data) == bytes:
+        if isinstance(data, bytes):
             return False
 
+        # check if the usual markers for PUBLIC KEY block are there
         data = data.strip().split("\n")
-        if data[0] == "-----BEGIN PGP PUBLIC KEY BLOCK-----" and data[-1] == "-----END PGP PUBLIC KEY BLOCK-----":
-            return True
-        return False
+        if data[0] != "-----BEGIN PGP PUBLIC KEY BLOCK-----" or data[-1] != "-----END PGP PUBLIC KEY BLOCK-----":
+            return False
 
-    def try_import(attachment):
-        if contains_public_key_block(attachment):
-            result = gpg.import_keys(attachment)
-            if result.results[0]['ok'] == '1':
-                return True
+        # looks like a PUBLIC KEY block, try to import it into keyring and report on results
+        result = gpg.import_keys(data)
+        if result.results[0]['ok'] == '1':
+            return True
+        else:
             return False
 
     imported = [i for i, (attach, _) in enumerate(attachments) if try_import(attach)]
@@ -69,7 +69,7 @@ def check_public_key_available(gpg, sender):
 
 def contains_signature(attachment):
     # it is a binary attachment, can not contain the PUBLIC KEY block
-    if type(attachment) == bytes:
+    if isinstance(attachment, bytes):
         return False
 
     attachment = attachment.strip().split("\n")
@@ -78,14 +78,14 @@ def contains_signature(attachment):
     return False
 
 
-def check_encryption_and_signature(gpg, msg):
+def check_encryption_and_signature(gpg, data):
     """
     :param gpg:
-    :param msg:
+    :param data:
     :return:
     """
 
-    result = gpg.decrypt(msg)
+    result = gpg.decrypt(data)
 
     # plain text message
     if result.status == 'no data was provided' and result.trust_text is None:
@@ -126,19 +126,17 @@ def verify_external_sig(gpg, data, sig):
         tmp.flush()
         result = gpg.verify_data(tmp.name, data)
 
-    if result.status == 'no data was provided' and result.trust_text is None:
-        return Signature.missing, ''
-
-    if result.status == 'signature valid':
+    if result.valid:
         return Signature.correct, ''
+
+    if result.status is None:
+        return Signature.missing, ''
 
     if result.status == 'no public key':
         reason_pubkey = 'we could not find your public key! Did you attach it or put it on a keyserver?'
         return Signature.incorrect, reason_pubkey
 
     return Signature.incorrect, 'FAILURE {}'.format(result.status)
-
-
 
 def select_response_encryption(key_status, encryption_status, signature_status):
     # A: Plaintext with no signature.
@@ -172,12 +170,6 @@ def encrypt_response(gpg, encryption_type, text, recipient):
         return gpg.sign(text).data.decode("UTF-8")
     else:
         return text
-
-
-#class CryptResult:
-#    def __init__(self):
-
-
 
 @contextmanager
 def init_gpg(path_to_buddy_keyring):
