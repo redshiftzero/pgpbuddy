@@ -28,6 +28,10 @@ Also generate a revocation certificate in case your keys are lost or compromised
 # To run the tests
 
     nosetests
+
+# Design Goal
+
+The buddy will initially support users using: Thunderbird/Enigmail, Mailvelope, and GPGTools. We will support both S/MIME and inline PGP. Four message types will be supported: plaintext unsigned email, signed email, encrypted email, and encrypted and signed email. Responses will be user friendly HTML messages. There will be a clear and easy to understand privacy policy. Users will navigate to the [PGPBuddy site](https://redshiftzero.github.io/pgpbuddy) which when combined with PGP Buddy's responses will provide enough information to guide them through the four tasks. 
 	
 # Bot Logic
 
