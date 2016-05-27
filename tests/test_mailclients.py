@@ -19,6 +19,7 @@ def test_inline_signed(client, gpg):
 
 
 def message_from_file(client, filename):
-    filename = path.join(path.join("samples", client), filename)
+    filename = ["tests", "samples", client, filename]
+    filename = path.join(*filename)
     with open(filename) as message:
         return [line.replace("\n", "").encode() for line in message]
