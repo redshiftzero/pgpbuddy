@@ -45,6 +45,7 @@ def mock_decrypt(encryption_status, signature_status):
 
     if encryption_status == Encryption.missing:
         if signature_status == Signature.correct:
+            print("hallllllllllllllllllllllllllllllooooooooooo")
             result = MagicMock(gnupg.Verify)
             result.status = 'signature valid'
 
@@ -91,6 +92,17 @@ def mock_verify(signature_status, public_key_status=None):
         result.valid = True
         result.status = 'signature valid'
         result.key_id = "1234"
+    return MagicMock(return_value=result)
+
+
+def mock_sign(success):
+    if success:
+        result = MagicMock(gnupg.Sign)
+        result.ok = True
+        result.data = b'ladida'
+    else:
+        result = MagicMock(gnupg.Sign)
+        result.ok = False
     return MagicMock(return_value=result)
 
 ############################################################################

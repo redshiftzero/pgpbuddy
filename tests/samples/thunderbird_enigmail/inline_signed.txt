@@ -1,0 +1,56 @@
+Return-Path: <user1@example.com>
+Delivered-To: buddy@example.com
+Received: from proxy01.example.com ([127.0.0.1])
+	by y.example.com (Y) with LMTP id 123
+	for <buddy@example.com>; Sun, 03 Jan 2016 00:55:26 +0100
+Received: from proxy01.example.com ([127.0.0.1])
+	by proxy01.example.com (Y) with LMTP id 234
+	; Sun, 03 Jan 2016 00:55:26 +0100
+Received: from mx02.example.com (mx02.example.local [10.125.125.165])
+	by proxy01.example.com (Postfix) with ESMTPS id 456
+	for <buddy@example.com>; Sun,  3 Jan 2016 00:55:26 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mx02.example.com (Postfix) with ESMTP id 678
+	for <buddy@example.com>; Sun,  3 Jan 2016 00:55:25 +0100 (CET)
+Received: from mx02.example.com ([127.0.0.1])
+	by localhost (y.example.com [127.0.0.1]) (x, port 10024)
+	with ESMTP id 11 for <buddy@example.com>;
+	Sun,  3 Jan 2016 00:55:25 +0100 (CET)
+Received: from x.example.com (unknown [185.67.36.28])
+	by mx02.example.com (Postfix) with ESMTPS
+	for <buddy@example.com>; Sun,  3 Jan 2016 00:55:25 +0100 (CET)
+Received: from mail.example.com (localhost [127.0.0.1])
+	by y.example.com (Postfix) with ESMTPSA id 789
+	for <buddy@example.com>; Sun,  3 Jan 2016 00:55:25 +0100 (CET)
+To: buddy@example.com
+From: User1<user1@example.com>
+Subject: only signed
+Message-ID: <13.33@example.com>
+Date: Sun, 3 Jan 2016 00:55:25 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+booh
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJWiGNtAAoJEAn1VmPxW4LK0xwP/1t4bAFlwH60rbxpiESWBbrt
+Qh/K1svWlFi15BNqm7U+kclBA0Id8U53fcmoeQwSNqx1nIkOakLwOh7lLcXJFX/6
+x29DXBsn8nSdH/I4V5Y6l5l3uySngXJ6fCzH/NibbEol54AiJ9mgGe2yLfTiSDhX
+5PFg2PnBqp7hztLOMC/cBSQiiHJtHIlg2cD43XFGRdk/SZ09oeKQo81xWhW9gtZs
+5JMOJHdwFCqLbUj3UjnmfVfj0ag71gaJ4YaRjuVT8PGBSnLHYXi3+o1/VaTsJheu
+BACyfTk5u4iH1BXWyXVa3bZLhDN82FTH2aS6GDY3bH2EGecFC/ShT+2XUSzOggKc
+s9nEJLhzr7V1+D4y+U0D1PCI1ONysQVar5e6/fklBYk4fF0E0bDSmvw+sT0gF+tD
+B6Chobm4LL3fDZpNwFKyanVx+N8DrY0pqwDNxKhHLouebf6VsEtCmrPtxEFhbGel
+9v4dtM7RkoWBb0wntj8C7Vw4yxshkOfzPkx5padhUCHqaHUTx1AXwg7zdNIRm75S
+kX9IF6XCug15UQJZ1232M3h/Fwf6f496dkzGLZMelRwfeKcRaiN7SgAkyvU4TUflz
+iyTMd2q6w3qXZbeOevws6ctzQAOZ4lOTAmv0r2D/ImUcpPVjYJ5crxzwdM1/L+Zt
+1wG+Q34Q11B3uaaEDi0a
+=efqx
+-----END PGP SIGNATURE-----
