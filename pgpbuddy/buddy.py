@@ -31,7 +31,7 @@ def handle_message(gpg, message):
     if 'FAILURE' in reason:
         log.info("Encryption and Signature incorrect for message: {}".format(raw_message))
 
-    return make_response(gpg, header, encryption_status, signature_status, reason)
+    return header, encryption_status, signature_status, reason
 
 
 def handle_multipart_encrypted(gpg, body):
@@ -103,7 +103,9 @@ def check_and_reply_to_messages(config):
     messages = fetch_messages(config["pop3-server"], config["username"], config["password"])
     for message in messages:
         with crypto.init_gpg(config["gnupghome"]) as gpg:
-            response_full = handle_message(gpg, message)
+            header, encryption_status, signature_status, reason = handle_message(gpg, message)
+            response_full = make_response(gpg, header, encryption_status, signature_status, reason)
+
         print(response_full["Subject"])
         send_response(config["smtp-server"], config["smtp-port"], config["username"],
                       config["password"], response_full)

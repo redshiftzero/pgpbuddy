@@ -1,0 +1,18 @@
+Content-Type: multipart/mixed; boundary="uNeADuGURbR8M6HhnLaHTeCocl049Bbgv"
+From: user1 <user1@example.com>
+To: buddy@example.com
+Message-ID: <56EDE.40506@example.com>
+Subject: S/MIME (encrypted, not signed)
+
+--uNeADuGURbR8M6HhnLaHTeCocl049Bbgv
+Content-Type: multipart/mixed; boundary="3lccUSRVCD0jk3v1lrd8ow2jauXrpNQjK"
+
+--3lccUSRVCD0jk3v1lrd8ow2jauXrpNQjK
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+my very first smime mail
+
+--3lccUSRVCD0jk3v1lrd8ow2jauXrpNQjK--
+
+--uNeADuGURbR8M6HhnLaHTeCocl049Bbgv--

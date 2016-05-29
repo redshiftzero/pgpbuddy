@@ -1,0 +1,84 @@
+Return-Path: <user1@example.com>
+Delivered-To: buddy@example.com
+Received: from proxy01.example.com ([127.0.0.1])
+	by y04.example.com (y) with LMTP id ea63O9lYVOAEAvlP5og
+	for <buddy@example.com>; Sat, 26 Mar 2016 13:04:04 +0100
+Received: from proxy01.example.com ([127.0.0.1])
+	by proxy01.example.com (y) with LMTP id 40SfE3N39lAAKZGY6Q
+	; Sat, 26 Mar 2016 13:04:04 +0100
+Received: from mx02.example.com (mx02.example.local [10.125.125.165])
+	by proxy01.example.com (Postfix) with ESMTPS id 3qXJjw52xMf
+	for <buddy@example.com>; Sat, 26 Mar 2016 13:04:04 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mx02.example.com (Postfix) with ESMTP id BB8ACC26
+	for <buddy@example.com>; Sat, 26 Mar 2016 13:04:04 +0100 (CET)
+X-Virus-Scanned: yyd-new at example.com
+X-Spam-Flag: NO
+X-Spam-Score: -1.107
+X-Spam-Level:
+X-Spam-Status: No, score=-1.107 required=6.01 tests=[BAYES_00=-1.9,
+	BODY_SINGLE_WORD=0.001, RDNS_NONE=0.793, SPF_PASS=-0.001]
+	autolearn=no autolearn_force=no
+Received: from mx02.example.com ([127.0.0.1])
+	by localhost (yy1.example.com [127.0.0.1]) (yyd-new, port 10024)
+	with ESMTP id vgMKnPP9x for <buddy@example.com>;
+	Sat, 26 Mar 2016 13:04:04 +0100 (CET)
+Received: from y03.example.com (unknown [185.67.36.28])
+	by mx02.example.com (Postfix) with ESMTPS
+	for <buddy@example.com>; Sat, 26 Mar 2016 13:04:04 +0100 (CET)
+Received: from mail.example.com (localhost [127.0.0.1])
+	by y03.example.com (Postfix) with ESMTPSA id 3qXJjDjz5vNC
+	for <buddy@example.com>; Sat, 26 Mar 2016 13:04:04 +0100 (CET)
+To: buddy@example.com
+From: User1 <user1@example.com>
+Subject: S/MIME Signed but not encrypted
+Message-ID: <56F63.5025@example.com>
+Date: Sat, 26 Mar 2016 13:03:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ protocol="application/pgp-signature";
+ boundary="4rJcjTqjKS3JRCgImqCgj4eqsNoMQuodj"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--4rJcjTqjKS3JRCgImqCgj4eqsNoMQuodj
+Content-Type: multipart/mixed; boundary="ece0sB9OptHsi6daEqbNPOk0Qow7KLEWL"
+From: User1 <user1@example.com>
+To: buddy@example.com
+Message-ID: <56F63.5025@example.com>
+Subject: S/MIME Signed but not encrypted
+
+--ece0sB9OptHsi6daEqbNPOk0Qow7KLEWL
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+ladida
+
+
+--ece0sB9OptHsi6daEqbNPOk0Qow7KLEWL--
+
+--4rJcjTqjKS3JRCgImqCgj4eqsNoMQuodj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJW9nqzAAoJEAn1VmPxW4LKlPAP/itQkSPSpvRJjlebTZwpNyIJ
+AVCyuyWo8zX9fZTLV83y3W6p0XLrAdlfFqWliiKa/+pcuI+YIXyCyBMRy2YbxEkj
+jr7Xx//+R8yrnKarX+0+QIX9NRTF8NQF+4VOHMR72nqQh2RC+jnIBnT9mpIwIYK4
+b1fsS0XtcANUyb6JmULAGI/4G/vpr9mrOb0bvpDbbO7OlgJ0keR/Qc3zKC5KHAGJ
+abW3kmnlJDzC1JT1ykeTXXZTlVEdWybjCuSJqouy6AqOOIswPU0KfCDZWsDIsjpA
+nyKGtEvv18sOdsDUhmHdhbZOTQcxN9EtoSY+qlrCYIsazdsGDQQMNi5yfW//F6/U
+a7sOFCwTyjpf4s1JtQoZAUtvLcPo1iox0s0Qjjja123FZS88k4FdO9q9GAvMscDD
+DycNuaRb/fd2UPVssm0bDzlIK5QBIWqpJCAszB512uggjWSti3Q6AbMpnvr8nTr8
++e5ODa1kssxNoY1pA6hLO0/8OAnrxaPMnZG9ewNuQ/f56rtO7v9yTz6+w5QwkbPb
+GAVf+oMsJQK9dHBfDMl89X/rImgcniwXRZ1LMbOedPZ5K1ATBV8sOyVoqeYZ3YYX
+SMvMCBP2yQhouFtt/1b3zyhe+qDrw8JeDO+LHw2xgfDtMOo/UItniqbLprSWVr7Y
+fvdYErqCDlTYwx94BMVm
+=4VvV
+-----END PGP SIGNATURE-----
+
+--4rJcjTqjKS3JRCgImqCgj4eqsNoMQuodj--

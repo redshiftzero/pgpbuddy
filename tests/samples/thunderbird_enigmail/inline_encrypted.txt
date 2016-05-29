@@ -1,0 +1,71 @@
+Return-Path: <user1@example.com>
+Delivered-To: buddy@example.com
+Received: from proxy01.example.com ([127.0.0.1])
+	by y04.example.com (y) with LMTP id jxVXDl5GiFbj5gEAvlqew5og
+	for <buddy@example.com>; Sat, 02 Jan 2016 22:55:21 +0100
+Received: from proxy01.example.com ([127.0.0.1])
+	by proxy01.example.com (y) with LMTP id uwgHDF5GiFaARQAwwZGY6Q
+	; Sat, 02 Jan 2016 22:55:21 +0100
+Received: from mx02.example.com (mx02.example.local [10.125.125.165])
+	by proxy01.example.com (Postfix) with ESMTPS id 3pXxwwxYSz2xBT
+	for <buddy@example.com>; Sat,  2 Jan 2016 22:55:21 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mx02.example.com (Postfix) with ESMTP id 1D86qwACC46
+	for <buddy@example.com>; Sat,  2 Jan 2016 22:55:21 +0100 (CET)
+X-Virus-Scanned: xxx at example.com
+X-Spam-Flag: NO
+X-Spam-Score: -1.108
+X-Spam-Level:
+X-Spam-Status: No, score=-1.108 required=6.01 tests=[BAYES_00=-1.9,
+	RDNS_NONE=0.793, SPF_PASS=-0.001] autolearn=no autolearn_force=no
+Received: from mx02.example.com ([127.0.0.1])
+	by localhost (y.example.com [127.0.0.1]) (yd-new, port 10024)
+	with ESMTP id GvDmpDY9RQC4 for <buddy@example.com>;
+	Sat,  2 Jan 2016 22:55:20 +0100 (CET)
+Received: from y03.example.com (unknown [185.67.36.28])
+	by mx02.example.com (Postfix) with ESMTPS
+	for <buddy@example.com>; Sat,  2 Jan 2016 22:55:20 +0100 (CET)
+Received: from mail.example.com (localhost [127.0.0.1])
+	by y03.example.com (Postfix) with ESMTPSA id 3pXxpw468Rz5vN2
+	for <buddy@example.com>; Sat,  2 Jan 2016 22:55:20 +0100 (CET)
+To: buddy@example.com
+From: user1 <user1@example.com>
+Subject: Encrypted
+Message-ID: <56884.0406@example.com>
+Date: Sat, 2 Jan 2016 22:55:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+-----BEGIN PGP MESSAGE-----
+Charset: utf-8
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+hQIMA/FWFTmZ1ZJ9ARAAi4s/RQ5YOBhs+zBpwLD+/pTADnGdQGld+0mhkhZZdtw0
+5wpesB3e07b7Ko5rTkMwvfmeB0H14dduAwz+92MVp68KSiubUg12HJslIMWR7Jka
+Yvab6UnpJsXr7beMv9dwXc0FegM3nkluA66pnv6DrXUsKjzCu4DqeU2xoLQ/hvQl
+eJ9oBuU9DPWvrW/NELNHwkUWf3JOKozCPux4XWu4R30eodtRdrRc4fTJerw5Bzo4
+IrV3URBJ76Y1C79MHQNvlFno7QfvHrM1/kB70abEo/ZAgWBq1vHcHNeDNJidXRCZ
+tBiieobcDNLQCIhuOHG9InTKHVGFGZJLLxpxMl1ayYAO3OZqEH7BM6cqD5Ykk2Sj
+NdHkqTNebQ491rn62U2IQrSUFzh88pR346EYPdScake5gpbgcuNOyroasnvYssDj
+M6O3ylOG4QqK0qNZ9/Mb5KvB23CEQLa5v/w3mFL/zfLNac8ShkWu9Fn1psNTI9a2
+RWGUfxA9Whkh6fT5d9+gj/nOB/kbO+Tz0lu9LKhpZAMNpC4g1kk1LQTKLc0dNJ28
+LeqxmIGcEogEIWIZWjIueGAVAwGjvgJoRaPz1Ydi7VkkCsBA9Oc4G9zvtAp5FDNO
+JglUOQ8lTISwBl/M0AuZzNg6vx67wY3ur7ayhJedPzFjpSH2NyLmiEfCMGvjF02F
+AgwD5HZJrfZWERgBD/9RsxBoM0l9mmMiVEH4zSR+59AakP0ELJWKJAneFw5ZSAgN
+b8fzPYIAgtLI+IMS5icslragLn7js9Jq/jX382ENEi2mbKgaoka0dJ+1akyBhzGT
+8HihglLZS/GtmSpOLSpikRPdNbtcO2ZocT8QHRoY3qDZ8FxSjTSIcdRaMRENP+LW
+T2h2QE7N8sJiWQIX3Y62G1i/dy3mZZrokbbU7mAmJuNfvaNMutbagqfapkQpdWqZ
+OX276Ii2UKTYyDcanHGLWCDjvT4QTuEyMyxsPxiKmz1qp5Tj4PF5Ob1LWBkY2Bvl
+ZAJ13zgX11EL5GOHV1s6BIwL1u8qBi1BWAc7Zj0DgZO54MQHa3Pxj0HensV+Lwpo
+rP8hQq+p/T6vsmKWNRdJ4777ssdwYDXJaryHE7FVl1AXK+fYroM9drbP6V2ZP9Pt
+r9gsbBmL8JfdQpG6AB6lHl7g0TjC1J9jEtFDrwHErTpJCVwJWm7dkMwEoi/Ws+Bc
+kFEGXqqIX4s0F99r19AzxuF46FsfOT71bHuA9Cd8d0vB6JMfC+TIuq7PecGLebAy
+eGHsNLe5+WHfnMVmetY51IzJ/ZhfD9cKVgtZpGxaapPT+jaOVJwoNaJefBz1+hIS
+TcxAC5glQmVaz5Yv3AUrG0Ej3ZwlQDTadXI23a64jmWSD93Rcy1IXNrjMq8DV9JR
+AVB7gNGtxvE0ts/ePKCGejyGiMpYQxQ9j0efhSJDNFbUH+6iZEApe8kWyAvKbUki
+jAfWk7hYf2Un+eFontFOjNABqntEGXrmTOXGneWbK23g
+=abZH
+-----END PGP MESSAGE-----

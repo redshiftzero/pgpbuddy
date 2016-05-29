@@ -1,0 +1,92 @@
+Return-Path: <user1@example.com>
+Delivered-To: buddy@example.com
+Received: from proxy01.example.com ([127.0.0.1])
+	by y04.example.com (y) with LMTP id DXctHSXj7VZnog
+	for <buddy@example.com>; Sun, 20 Mar 2016 01:08:03 +0100
+Received: from proxy01.example.com ([127.0.0.1])
+	by proxy01.example.com (y) with LMTP id fxubNXKZGY6Q
+	; Sun, 20 Mar 2016 01:08:03 +0100
+Received: from mx02.example.com (mx02.example.local [10.125.125.165])
+	by proxy01.example.com (Postfix) with ESMTPS id 3qSK6W4j5z2xCL
+	for <buddy@example.com>; Sun, 20 Mar 2016 01:08:03 +0100 (CET)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mx02.example.com (Postfix) with ESMTP id A0C825ACC38
+	for <buddy@example.com>; Sun, 20 Mar 2016 01:08:03 +0100 (CET)
+X-Virus-Scanned: yd-new at example.com
+X-Spam-Flag: NO
+X-Spam-Score: -0.708
+X-Spam-Level:
+X-Spam-Status: No, score=-0.708 required=6.01 tests=[BAYES_05=-0.5,
+	ENCRYPTED_MESSAGE=-1, RDNS_NONE=0.793, SPF_PASS=-0.001]
+	autolearn=no autolearn_force=no
+Received: from mx02.example.com ([127.0.0.1])
+	by localhost (y1.example.com [127.0.0.1]) (yd-new, port 10024)
+	with ESMTP id lVAqkM_wm for <buddy@example.com>;
+	Sun, 20 Mar 2016 01:08:03 +0100 (CET)
+Received: from y03.example.com (unknown [185.67.36.28])
+	by mx02.example.com (Postfix) with ESMTPS
+	for <buddy@example.com>; Sun, 20 Mar 2016 01:08:03 +0100 (CET)
+Received: from mail.example.com (localhost [127.0.0.1])
+	by y03.example.com (Postfix) with ESMTPSA id 3qSKGm4z5vMr
+	for <buddy@example.com>; Sun, 20 Mar 2016 01:08:03 +0100 (CET)
+To: buddy@example.com
+From: User1 <user1@example.com>
+Subject: S/MIME (encrypted, not signed)
+Message-ID: <56EDE.40506@example.com>
+Date: Sun, 20 Mar 2016 01:08:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+MIME-Version: 1.0
+Content-Type: multipart/encrypted;
+ protocol="application/pgp-encrypted";
+ boundary="ViUDg2hTFqj16b2b4eq0v3gejpFAM15MX"
+
+This is an OpenPGP/MIME encrypted message (RFC 4880 and 3156)
+--ViUDg2hTFqj16b2b4eq0v3gejpFAM15MX
+Content-Type: application/pgp-encrypted
+Content-Description: PGP/MIME version identification
+
+Version: 1
+
+--ViUDg2hTFqj16b2b4eq0v3gejpFAM15MX
+Content-Type: application/octet-stream; name="encrypted.asc"
+Content-Description: OpenPGP encrypted message
+Content-Disposition: inline; filename="encrypted.asc"
+
+-----BEGIN PGP MESSAGE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+hQIMA/FWFTmZ1ZJ9AQ/9EJBOzVCTJcoAJfCg2+xgx2J9688lVqBRx+Un50N3xRyX
+4rkJgsDENae/4gPx21hoY3nnnYQLSHlVySHcoUX/nG8Rtx/ShL2eqBfjFNafHVXe
+dHnlhZbuHDNW66VJHq33PWf1fCMQl08GuKCh4wl6itiY0Tfh6EYhOAuqbHBPLJce
+5Bucy0iM/HrWyMB8YKc8Dr9h+67vunLiu3+x8Fqyv9bE8ZRK9Bwsqz585LHAmGVe
+qk6hYVAM91kJcik4Q8v7qJY5VHTDm7fMsVU/elOiKfA38yL9Spa7QZdhpWLwHw3m
+RZYfAqy3f/VbK3Rz4HoenVei0OtJSgT3TsdY8CMg3QGl2pYcVgXf5G7IDg6/jd1i
+SCxqqBI+ror+wEHUA2tninOphU/FhSujkjd4W/ACuFdPxKHm8VI/I9vL5pL6s+Mj
+0TzVyjKczii1hOamjAdzo4s1SP6uB8Aj8+PWAFL80lDyoEdyOEljfsbKez0aPyaq
+VHGm1DJOntotI2Mjd4r50GgZxq3Yiqm5ibLvfaItxaLRJBiOYMoDZ9FNjyN40ZaS
+OHouoi8vfQEG09SWskXzBKWtqTriI1mzj8Udbqkik8IamHLEclOFFraHYb3DyeoJ
+slSfgfn+bu1U0+UJw1j6MWWNx7r3Omvz9hablMAvxtrZ5ehAsYO0ou2sSyCTfoKF
+AgwD5HZJrfZWERgBD/9P9VX6QF7FOPqwbQgik04vF1xh2NGKDPu/1bk7elOri9W3
+Etmgw8oW0naKye2V6vdvCtOSSmdbleCVrQCISGQY9YXNBh3rLnmphWSVNclEC4Wg
+lVHJyzRYeiSYqUnokClsHe/HcxN/Ju1x8XgnDJz26qHBMbgx1QecMgIMNKKQJWvm
+hRer1AVctLrgMBb8ViLebHrBfstAav6YvS2ECyZr7EQRxeAB73DnnWRbooTg+nMs
+XNbfFF+DQBRJcFcxSpzYIuohRPPkjjmTwwGDpijXJw6/zmFHhchqZdLTwYQExelP
+epuE+1H+hyDURdcUDhn7K7hkbWwk60g75aglpTNJTzTujhE5BaI6S/J/06+u4tJS
+w60zcgsOcpTfOd1p3Ecl9Op4noTft97JKbHtzdGCJj5kxQGbq0LSkw7AF2iqTvvD
+FjnjGvRFtLmypy5DgQaK8RMNGM4kjjk18EILZVBjWn9TXT1jVSUYrnVyOEUyuPwW
+6czBQPmrmji8W/YgLOydcrlLhy+nFFVnKjABEl0bpqIlZ4JS/sPz6WLoLVSR1vG/
+uMVXyRzvEGNuqQpKgkNq1yRDpcCGloSjrc9aLsjRZIQTG9i8ZjhLz+YjM0t5ZT0h
+AfZd/iroSoBaZC+aR/r7/1pGY+ukjQeo6h/U47MoV/G19Lh1G/+guu8qN+6ZttLA
+vgF+6Bfa9XLD56CbsX4mgRUFHKnsaAFN1xyi78feogQMqo8RBTP5AUG1mPQjxqSe
+CpDz/t0O19XQRhPB5DV2Vpgrgn4G+ZsaqaSmrW65iNOOK7Xx21sm5TdYzSgIrUTn
+Dt/wWBGNUbrrYkffMeawAvDFrTggmvJn+F670Rtrx1tVTECVeP9o8zMqeY+HsGTv
+ZmDIIe5xAaoVlpFGo1VaEAu2iS29PqrqLZv5D9N26UV1/3MJFyk9x3LOJHzbxOkn
+FR1NeJIgajI735cmxQkfbLrlnR/2qQxqncHl3x2ls+ff7QFDv4P5Z2zyGN1F3k3P
+0PtEfhD10/kxUs2ugXUMJTyz1E1eg0V820HKiBkxAIq4gMQQ7ZvWt7RJnZRi/w3y
+lDucTTqJBdC3dCzWIUl/2U49Yv3G4U3r8pxfys2adSTEnBb66qLhSgEN02AZ3dhU
+Xxd/ajTRSBC/pV2rBcP+iNl9CfDbnGfsQ676Rxz2T7472inh2XALeojR8ssOp/0=
+=E6tL
+-----END PGP MESSAGE-----
+
+--ViUDg2hTFqj16b2b4eq0v3gejpFAM15MX--
